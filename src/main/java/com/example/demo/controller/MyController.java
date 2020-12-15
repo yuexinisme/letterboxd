@@ -29,10 +29,28 @@ public class MyController {
    @Autowired
    LikesMapper likesMapper;
 
+   @Autowired
+   Collector collector;
+
     @GetMapping("get")
     @ResponseBody
+    @CrossOrigin
     public Long getNum(@RequestParam("name") String name, HttpServletResponse res) {
         res.setHeader("Content-Type", "application/json;charset=utf-8");
         return likesMapper.getNum(name);
     }
+
+    @GetMapping("scan")
+    @ResponseBody
+    public void scan() throws Exception {
+        collector.collectLikes();
+    }
+
+    @PostMapping("test")
+    @ResponseBody
+    public void test(@RequestBody String gay, int age) {
+        //PageHelper.startPage(1,3);
+        likesMapper.getNum("d");
+    }
+
 }
