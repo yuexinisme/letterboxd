@@ -33,7 +33,7 @@ public class Collector implements ApplicationRunner {
         PreparedStatement statement = conn.prepareStatement("insert into likes (name, movie) values (?,?)");
         PreparedStatement checkState = conn.prepareStatement("select * from likes where id=? and movie=?");
         Map<String, Integer> res = new HashMap<String, Integer>();
-        for (int page = 1; page <= 28; page++) {
+        for (int page = 1;; page++) {
             Document document;
             try {
                  document = Jsoup.connect("https://letterboxd.com/yuexinisme/films/reviews/page/" + page)
@@ -45,6 +45,9 @@ public class Collector implements ApplicationRunner {
             System.out.println("https://letterboxd.com/yuexinisme/films/reviews/page/" + page);
             //System.out.println(document);
             Elements names = document.getElementsByClass("like-link-target react-component -monotone");
+            if (names.size() == 0) {
+                break;
+            }
             for (Element e:names) {
                 //System.out.println(e);
                 String url = e.attr("data-likes-page");
@@ -114,6 +117,8 @@ public class Collector implements ApplicationRunner {
                 System.out.println("开始收集，当前时间：" + time);
                 try {
                     collectLikes();
+                    String t = f.format(new Date());
+                    System.out.println("结束收集，当前时间：" + t);
                 } catch (Exception e) {
 
                 }
