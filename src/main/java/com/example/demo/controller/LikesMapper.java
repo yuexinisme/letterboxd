@@ -18,4 +18,7 @@ public interface LikesMapper {
 
     @Select("select count(movie) c from likes where name=#{name} and movie=#{movie}")
     Long check(String name, String movie);
+
+    @Insert("insert into people values('${name}')")
+    void x(String name);
 }

@@ -36,13 +36,13 @@ public class Collector implements ApplicationRunner {
         for (int page = 1;; page++) {
             Document document;
             try {
-                 document = Jsoup.connect("https://letterboxd.com/yuexinisme/films/reviews/page/" + page)
+                 document = Jsoup.connect("https://letterboxd.com/NickOfDaSouf/films/reviews/page/" + page)
                         .get();
             } catch (Exception e) {
                 continue;
             }
 
-            System.out.println("https://letterboxd.com/yuexinisme/films/reviews/page/" + page);
+            System.out.println("https://letterboxd.com/NickOfDaSouf/films/reviews/page/" + page);
             //System.out.println(document);
             Elements names = document.getElementsByClass("like-link-target react-component -monotone");
             if (names.size() == 0) {
@@ -77,19 +77,18 @@ public class Collector implements ApplicationRunner {
                         } else {
                             System.out.println("重复, name:" + name + " url: " + fullUrl);
                         }
-
-                        if (res.containsKey(name)) {
-                            res.put(name, res.get(name) + 1);
-                        } else {
-                            res.put(name, 1);
-                        }
+//
+//                        if (res.containsKey(name)) {
+//                            res.put(name, res.get(name) + 1);
+//                        } else {
+//                            res.put(name, 1);
+//                        }
                     }
                 }
 
 
             }
         }
-        System.out.println(res);
         return res;
     }
 
@@ -101,28 +100,33 @@ public class Collector implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println("starting collection~~~");
+        collectLikes();
         Date date = null;
         SimpleDateFormat f = new SimpleDateFormat();
         while (true) {
             long l = System.currentTimeMillis();
             date = new Date(l);
             int minutes = date.getMinutes();
+            int hour = date.getHours();
 //            int seconds = date.getSeconds();
 //            if (seconds == 0) {
 //                String time = f.format(date);
 //                System.out.println("当前时间：" + time);
 //            }
-            if (minutes == 0) {
+            if (minutes == 0 && hour % 2 == 0) {
                 String time = f.format(date);
                 System.out.println("开始收集，当前时间：" + time);
                 try {
                     collectLikes();
-                    String t = f.format(new Date());
+                    Date d2 = new Date();
+                    String t = f.format(d2);
                     System.out.println("结束收集，当前时间：" + t);
+                    System.out.println("用时：" + (d2.getTime() - date.getTime())/1000/60 + "分钟");
                 } catch (Exception e) {
 
                 }
             }
         }
     }
+
 }

@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.controller.LikesMapper;
 
+//import com.github.pagehelper.PageHelper;
 import org.apache.catalina.core.ApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
@@ -94,15 +97,71 @@ private static Boolean flag = false;
 		return result;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(flag);
-		new DemoApplicationTests().change();
-		System.out.println(flag);
-		Arrays.asList(1,2);
-		new LinkedList().pop();
+	public static void main(String[] args) throws Exception{
+		ReentrantLock l = new ReentrantLock(true);
+		//PageHelper.startPage(1,2);
+		l.lock();
+		l.unlock();
+		Condition c = l.newCondition();
+		c.await();
+		c.signal();
+		c.signalAll();
+//		new Thread().isInterrupted();
+		CyclicBarrier cb;
+		CountDownLatch cdl;
+
+		Semaphore sp = new Semaphore(3, true);
+		sp.acquire();
+		sp.acquire(3);
+		sp.release(3);
+		sp.release();
+//		ExecutorService p = Executors.newSingleThreadExecutor();
+//		ArrayList<Object> objects = null;
+//		p.shutdown();
+//		objects.toString();
+//		Arrays.asList();
+//		objects.size();
+//		p.execute(new Runnable() {
+//			@Override
+//			public void run() {
+//
+//			}
+//		});
+		CyclicBarrier x = new CyclicBarrier(4, new Runnable() {
+			@Override
+			public void run() {
+
+			}
+		});
+		x.await();
+		CountDownLatch cc = new CountDownLatch(3);
+		cc.countDown();
+		cc.await();
+		ThreadLocal tl = new ThreadLocal();
+		tl.set(3);
+		tl.get();
 	}
 
 	private void change() {
 		flag = true;
+	}
+
+	public int lengthOfLastWord(String s) {
+		char[] chars = s.toCharArray();
+		boolean started = false;
+		int idx = 0;
+		for (int i = chars.length - 1; i >= 0; i--) {
+			if (chars[i] != ' ' && !started) {
+				started = true;
+				idx = 1;
+			}
+			if (started && chars[i] != ' ') {
+				idx++;
+			}
+			if (started && chars[i] == ' ') {
+				return idx;
+			}
+		}
+		return idx;
 	}
 }
