@@ -5,7 +5,7 @@ import com.example.demo.controller.LikesMapper;
 
 //import com.github.pagehelper.PageHelper;
 
-import com.example.demo.mapper.BookWrapperMapper;
+
 import com.github.pagehelper.PageHelper;
 import com.opencsv.CSVReader;
 import org.apache.http.HttpEntity;
@@ -42,6 +42,7 @@ import org.springframework.data.elasticsearch.core.query.HighlightQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -89,11 +90,10 @@ public class MyController {
     @Autowired
     PlayerMapper playerMapper;
 
-    @Autowired
-    BookWrapperMapper bwm;
 
-//    @Autowired
-//    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
 
     @GetMapping("get")
@@ -127,13 +127,14 @@ public class MyController {
     //@Transactional
     public Object demo(@RequestParam String name) {
 
-        return bwm.insert(null);
+        return "";
 
     }
 
     private void add(String name) {
         likesMapper.x(name);
-        throw new RuntimeException();
+        Integer[] ints = {3,4};
+        Arrays.sort(ints);
     }
 
     @GetMapping("es")
@@ -224,12 +225,12 @@ public class MyController {
         return reviews;
     }
 
-//    @GetMapping("send")
-//    @ResponseBody
-//    public String get(@RequestParam String msg) {
-//        kafkaTemplate.send("quickstart-events", "demo", msg);
-//        return "x";
-//    }
+    @GetMapping("send")
+    @ResponseBody
+    public String get(@RequestParam String msg) {
+        kafkaTemplate.send("kaka", "demo", msg);
+        return "x";
+    }
 
     @GetMapping("collect")
     @ResponseBody

@@ -140,6 +140,7 @@ private static Boolean flag = false;
 		ThreadLocal tl = new ThreadLocal();
 		tl.set(3);
 		tl.get();
+		Executors.newCachedThreadPool();
 	}
 
 	private void change() {
