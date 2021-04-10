@@ -37,7 +37,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.16</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson</artifactId>
+			<version>3.15.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
@@ -68,11 +72,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
-		<dependency>
-			<groupId>com.github.pagehelper</groupId>
-			<artifactId>pagehelper-spring-boot-starter</artifactId>
-			<version>1.2.13</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.github.pagehelper</groupId>-->
+<!--			<artifactId>pagehelper-spring-boot-starter</artifactId>-->
+<!--			<version>1.2.13</version>-->
+<!--		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
@@ -80,6 +84,13 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.12.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+			<version>2.2.2.RELEASE</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-elasticsearch -->
 		<dependency>
@@ -93,6 +104,13 @@
 			<artifactId>opencsv</artifactId>
 			<version>5.3</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.zendesk</groupId>
+			<artifactId>mysql-binlog-connector-java</artifactId>
+			<version>0.25.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-freemarker</artifactId>
@@ -109,7 +127,22 @@
 			<artifactId>kubernetes-client</artifactId>
 			<version>5.2.1</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo-spring-boot-starter -->
+<!--		<dependency>-->
+<!--			<groupId>com.alibaba.boot</groupId>-->
+<!--			<artifactId>dubbo-spring-boot-starter</artifactId>-->
+<!--			<version>0.2.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>com.101tec</groupId>-->
+<!--			<artifactId>zkclient</artifactId>-->
+<!--			<version>0.10</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.thrift</groupId>-->
+<!--			<artifactId>libthrift</artifactId>-->
+<!--			<version>0.8.0</version>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>

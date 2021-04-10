@@ -100,7 +100,7 @@ public class Collector implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println("starting collection~~~");
-        //collectLikes();
+        collectLikes();
         Date date = null;
         SimpleDateFormat f = new SimpleDateFormat();
         while (true) {

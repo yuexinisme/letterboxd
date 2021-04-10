@@ -1,30 +1,18 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.controller.LikesMapper;
-
 //import com.github.pagehelper.PageHelper;
 
-
-import com.github.pagehelper.PageHelper;
+//import com.alibaba.dubbo.config.annotation.Reference;
+import com.example.demo.concurrent.A;
+import com.example.demo.concurrent.B;
+import com.mifmif.common.regex.Generex;
+import com.mifmif.common.regex.Node;
 import com.opencsv.CSVReader;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.elasticsearch.index.query.MatchQueryBuilder;
+        import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.bucket.terms.*;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
+        import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+        import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -38,28 +26,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.query.HighlightQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
+        import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+        import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
-import java.awt.*;
-import java.io.*;
-import java.nio.Buffer;
-import java.text.SimpleDateFormat;
+        import java.io.*;
+        import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
+        import java.util.stream.Collectors;
+        import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
 /**
  * @author Nick Yuan
@@ -71,6 +51,7 @@ public class MyController {
 
     @Autowired
     LikesMapper likesMapper;
+
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -90,6 +71,11 @@ public class MyController {
     @Autowired
     PlayerMapper playerMapper;
 
+    @Autowired
+    ApplicationContext context;
+
+    //@Reference(version = "1.3", group = "g1")
+    A a;
 
 
     @Autowired
@@ -115,20 +101,23 @@ public class MyController {
     }
 
     @GetMapping("test")
-    //@ResponseBody
-    public String test(ModelAndView mv) {
-        //PageHelper.startPage(1,3);
-        likesMapper.getNum("name");
-        return "idx";
+    @ResponseBody
+    public String test() {
+        return a.test();
     }
 
     @GetMapping("demo")
     @ResponseBody
     //@Transactional
-    public Object demo(@RequestParam String name) {
+    public Object demo() {
 
-        return "";
-
+        Person p = context.getBean(Person.class);
+        System.out.println("person");
+        System.out.println(p);
+        Node bean = context.getBean(Node.class);
+        System.out.println("another");
+        System.out.println(bean);
+        return "ok";
     }
 
     private void add(String name) {
@@ -418,14 +407,5 @@ public class MyController {
             System.out.println("highest: " + playerMapper.getMin(s));
         }
         return "done";
-    }
-
-    @GetMapping("marker")
-    public ModelAndView marker(Map<String, Object> dataModel, ModelAndView mv) {
-        System.out.println("xxxxx");
-        dataModel.put("name", "gaga");
-        mv.setViewName("abc");
-        mv.addObject("name", "katay");
-        return mv;
     }
 }

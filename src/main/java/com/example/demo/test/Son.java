@@ -1,12 +1,18 @@
 package com.example.demo.test;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.example.demo.model.Book;
+import com.fasterxml.jackson.databind.ObjectReader;
+import okhttp3.Call;
+import org.apache.http.HttpRequestInterceptor;
 
-public class Son {
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class Son implements Callable<String> {
 
     {
         System.out.println("son static");
@@ -21,11 +27,26 @@ public class Son {
     static List<String> list = new ArrayList<>();
 
     public static void main(String[] args) throws Exception{
-        ExecutorService pool = Executors.newFixedThreadPool(24);
-        pool.execute(new Dad(list, "gaga"));
-        pool.execute(new Dad(list, "brad"));
-        Thread.sleep(3000);
-        System.out.println(list);
-        Executors.newFixedThreadPool(3);
+//        Book book = new Book("book of love");
+//        book.setName("book of love");
+//        FileOutputStream fos = new FileOutputStream("/Users/nickyuan/Downloads/1.txt");
+//        ObjectOutputStream oos = new ObjectOutputStream(fos);
+//        oos.writeObject(book);
+//        oos.close();
+//        fos.close();
+//        FileInputStream fis = new FileInputStream("/Users/nickyuan/Downloads/1.txt");
+//        ObjectInputStream ois = new ObjectInputStream(fis);
+//        Book o = (Book) ois.readObject();
+//        System.out.println(o.getName());
+//        HttpRequestInterceptor g;
+        long l = System.nanoTime();
+        Thread.sleep(100);
+        System.out.println(System.nanoTime() - l);
+        LinkedBlockingQueue queue;
     }
-}
+
+        @Override
+        public String call() throws Exception {
+            return "xixi";
+        }
+    }

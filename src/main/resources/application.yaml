@@ -4,3 +4,13 @@ spring:
       auto-offset-reset: earliest
     listener:
       ack-mode: MANUAL_IMMEDIATE
+
+
+dubbo:
+  application:
+    id: dubbo-consumer-demo
+    name: dubbo-consumer-demo
+    logger: slf4j
+person:
+  name: gaga
+  age: 46

@@ -25,4 +25,7 @@ public interface PlayerMapper {
 
     @Select("select name from players group by name")
     List<String> getAllNames();
+
+    @Select("select * from players")
+    List<Player> getAll();
 }
