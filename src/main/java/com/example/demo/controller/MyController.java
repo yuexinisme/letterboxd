@@ -74,6 +74,9 @@ public class MyController {
     @Autowired
     ApplicationContext context;
 
+    @Autowired
+    TestService testService;
+
     //@Reference(version = "1.3", group = "g1")
     A a;
 
@@ -103,7 +106,7 @@ public class MyController {
     @GetMapping("test")
     @ResponseBody
     public String test() {
-        return a.test();
+        return testService.getCount();
     }
 
     @GetMapping("demo")

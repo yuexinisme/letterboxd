@@ -18,6 +18,13 @@ public class B implements A{
 
     @Override
     public String test() {
+        int n = 3;
+        n = n >>> 1;
+        System.out.println(n);
         return "yes";
+    }
+
+    public static void main(String[] args) {
+        new B().test();
     }
 }

@@ -72,10 +72,10 @@ public class Collector implements ApplicationRunner {
 //                        statement.setString(2, fullUrl);
                         Long num = mapper.check(name, fullUrl);
                         if (num != null && num == 0) {
-                            System.out.println("插入, name:" + name + " url: " + fullUrl);
+                            //System.out.println("插入, name:" + name + " url: " + fullUrl);
                             mapper.add(name, fullUrl);
                         } else {
-                            System.out.println("重复, name:" + name + " url: " + fullUrl);
+                            //System.out.println("重复, name:" + name + " url: " + fullUrl);
                         }
 //
 //                        if (res.containsKey(name)) {
@@ -100,7 +100,7 @@ public class Collector implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println("starting collection~~~");
-        collectLikes();
+        //collectLikes();
         Date date = null;
         SimpleDateFormat f = new SimpleDateFormat();
         while (true) {
