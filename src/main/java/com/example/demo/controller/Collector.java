@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -7,6 +8,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -18,10 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class Collector implements ApplicationRunner {
 
     @Autowired
     LikesMapper mapper;
+
+    @Autowired
+    private RedisTemplate<String, String> template;
+
 
     /**
      *
@@ -42,7 +49,7 @@ public class Collector implements ApplicationRunner {
                 continue;
             }
 
-            System.out.println("https://letterboxd.com/NickOfDaSouf/films/reviews/page/" + page);
+            log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
             //System.out.println(document);
             Elements names = document.getElementsByClass("like-link-target react-component -monotone");
             if (names.size() == 0) {
@@ -52,7 +59,7 @@ public class Collector implements ApplicationRunner {
                 //System.out.println(e);
                 String url = e.attr("data-likes-page");
                 String fullUrl = "https://letterboxd.com" + url;
-                System.out.println(fullUrl);
+                log.info(fullUrl);
                 for (int p = 1;;p++) {
                     Document doc;
                     try {
@@ -66,16 +73,22 @@ public class Collector implements ApplicationRunner {
                     if (els.size() == 0)
                         break;
                     for (Element e1:els) {
+                        int repeats = 0;
                         String name = e1.text();
-                        System.out.println(name);
+                        log.info(name);
 //                        statement.setString(1, name);
 //                        statement.setString(2, fullUrl);
                         Long num = mapper.check(name, fullUrl);
                         if (num != null && num == 0) {
-                            //System.out.println("插入, name:" + name + " url: " + fullUrl);
+                            log.info("插入, name:" + name + " url: " + fullUrl);
+                            //删除redis缓存
+                            template.delete(name + "_COUNT");
                             mapper.add(name, fullUrl);
                         } else {
-                            //System.out.println("重复, name:" + name + " url: " + fullUrl);
+                            log.info("重复, name:" + name + " url: " + fullUrl);
+                            if (++repeats > 1) {
+                                break;
+                            }
                         }
 //
 //                        if (res.containsKey(name)) {
@@ -99,8 +112,8 @@ public class Collector implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println("starting collection~~~");
-        //collectLikes();
+        log.info("starting collection~~~");
+        collectLikes();
         Date date = null;
         SimpleDateFormat f = new SimpleDateFormat();
         while (true) {
@@ -115,13 +128,13 @@ public class Collector implements ApplicationRunner {
 //            }
             if (minutes == 0 && hour % 2 == 0) {
                 String time = f.format(date);
-                System.out.println("开始收集，当前时间：" + time);
+                log.info("开始收集，当前时间：" + time);
                 try {
                     collectLikes();
                     Date d2 = new Date();
                     String t = f.format(d2);
-                    System.out.println("结束收集，当前时间：" + t);
-                    System.out.println("用时：" + (d2.getTime() - date.getTime())/1000/60 + "分钟");
+                    log.info("结束收集，当前时间：" + t);
+                    log.info("用时：" + (d2.getTime() - date.getTime())/1000/60 + "分钟");
                 } catch (Exception e) {
 
                 }

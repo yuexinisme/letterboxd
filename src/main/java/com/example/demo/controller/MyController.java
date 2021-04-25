@@ -9,7 +9,9 @@ import com.example.demo.concurrent.B;
 import com.mifmif.common.regex.Generex;
 import com.mifmif.common.regex.Node;
 import com.opencsv.CSVReader;
-        import org.elasticsearch.index.query.MatchQueryBuilder;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
         import org.elasticsearch.search.sort.SortBuilders;
@@ -27,7 +29,9 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
         import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-        import org.springframework.kafka.core.KafkaTemplate;
+
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +42,8 @@ import javax.servlet.http.HttpServletResponse;
         import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-        import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
         import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
 /**
@@ -47,10 +52,14 @@ import java.util.List;
  * @mood shitty
  */
 @Controller
+@Slf4j
 public class MyController {
 
     @Autowired
     LikesMapper likesMapper;
+
+    @Autowired
+    private RedisTemplate<String, String> template;
 
 
     @Autowired
@@ -90,9 +99,18 @@ public class MyController {
     @CrossOrigin
     @Transactional
     public Long getNum(@RequestParam("name") String name, HttpServletResponse res) {
-        res.setHeader("Content-Type", "application/json;charset=utf-8");
-        likesMapper.getNum(name);
-        return likesMapper.getNum(name);
+        Long count;
+        String s = null;
+        s = template.opsForValue().get(name + "_COUNT");
+        if (StringUtils.isBlank(s)) {
+            log.info("query database: {}", name);
+            count = likesMapper.getNum(name);
+            template.opsForValue().set(name + "_COUNT", count.toString(), 1, TimeUnit.DAYS);
+        } else {
+            log.info("hit redis: {}->{}", name, s);
+            return Long.valueOf(s);
+        }
+        return count;
 
     }
 
