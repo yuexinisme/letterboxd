@@ -40,13 +40,14 @@ private static Boolean flag = false;
 //        Stream<Integer> s1 = stream.map(x -> x + 1);
 //        Stream<Integer> s3 = s1.map(x->x+2);
 //        List<Integer> s = s3.collect(Collectors.toList());
-        HttpClientBuilder builder = HttpClientBuilder.create();
-        CloseableHttpClient client = builder.build();
-        HttpResponse response = null;
-        String url = "http://write.blog.csdn.net/postedit";
-        HttpGet get = new HttpGet(url);
-        response = client.execute(get);
-        System.out.println(response);
+        Future<?> f = Executors.newCachedThreadPool().submit(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        f.get();
+
     }
 //
 //	@Test

@@ -6,11 +6,10 @@ package com.example.demo.controller;
 //import com.alibaba.dubbo.config.annotation.Reference;
 import com.example.demo.concurrent.A;
 import com.example.demo.concurrent.B;
-import com.mifmif.common.regex.Generex;
-import com.mifmif.common.regex.Node;
-import com.opencsv.CSVReader;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -31,7 +30,7 @@ import org.springframework.data.elasticsearch.core.SearchHits;
         import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -90,14 +89,15 @@ public class MyController {
     A a;
 
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+//    @Autowired
+//    private KafkaTemplate<String, String> kafkaTemplate;
 
 
     @GetMapping("get")
     @ResponseBody
     @CrossOrigin
     @Transactional
+
     public Long getNum(@RequestParam("name") String name, HttpServletResponse res) {
         Long count;
         String s = null;
@@ -120,26 +120,41 @@ public class MyController {
         int x = 5 & 3;
         collector.collectLikes();
     }
+//    @RequestMapping(value = "/login", method = RequestMethod.GET)
+//    @ResponseBody
+//    public String login(@RequestParam("username") String username, @RequestParam("password") String password) {
+//        // 从SecurityUtils里边创建一个 subject
+//        Subject subject = SecurityUtils.getSubject();
+//        // 在认证提交前准备 token（令牌）
+//        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+//        // 执行认证登陆
+//        try {
+//            subject.login(token);
+//        } catch (UnknownAccountException uae) {
+//            return "未知账户";
+//        } catch (IncorrectCredentialsException ice) {
+//            return "密码不正确";
+//        } catch (LockedAccountException lae) {
+//            return "账户已锁定";
+//        } catch (ExcessiveAttemptsException eae) {
+//            return "用户名或密码错误次数过多";
+//        } catch (AuthenticationException ae) {
+//            return "用户名或密码不正确！";
+//        }
+//        if (subject.isAuthenticated()) {
+//            return "登录成功";
+//        } else {
+//            token.clear();
+//            return "登录失败";
+//        }
+//    }
 
     @GetMapping("test")
     @ResponseBody
-    public String test() {
+    public String test(@RequestParam String name, @RequestParam String val) {
         return testService.getCount();
     }
 
-    @GetMapping("demo")
-    @ResponseBody
-    //@Transactional
-    public Object demo() {
-
-        Person p = context.getBean(Person.class);
-        System.out.println("person");
-        System.out.println(p);
-        Node bean = context.getBean(Node.class);
-        System.out.println("another");
-        System.out.println(bean);
-        return "ok";
-    }
 
     private void add(String name) {
         likesMapper.x(name);
@@ -147,45 +162,7 @@ public class MyController {
         Arrays.sort(ints);
     }
 
-    @GetMapping("es")
-    @ResponseBody
-    public String es() throws Exception {
-        try {
-            int id = 0;
-            FileInputStream fis = new FileInputStream("/Users/nickyuan/Downloads/reviews.csv");
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            CSVReader reader = new CSVReader(isr);
-            for (String[] values; (values = reader.readNext()) != null; ) {
-                if (values[0].startsWith("Date")) {
-                    continue;
-                }
-                Review review = new Review();
-                review.setName(values[1]);
-                review.setUrl(values[3]);
-                String s = values[4];
-                double v = Double.parseDouble(s);
-                review.setRating(v);
-                review.setContent(values[6]);
-                review.setTags(values[7]);
-                String value = values[8];
-                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-                Date parse = f.parse(value);
-                review.setDate(parse);
-                review.setId(++id);
-                System.out.println(review);
-                reviewRepo.save(review);
-                System.out.println(review.getName() + "保存！");
 
-            }
-
-            reader.close();
-            isr.close();
-            fis.close();
-        } catch (Exception e) {
-
-        }
-        return "done!";
-    }
 
     @GetMapping("search")
     @ResponseBody
@@ -238,7 +215,7 @@ public class MyController {
     @GetMapping("send")
     @ResponseBody
     public String get(@RequestParam String msg) {
-        kafkaTemplate.send("kaka", "demo", msg);
+        //kafkaTemplate.send("kaka", "demo", msg);
         return "x";
     }
 
