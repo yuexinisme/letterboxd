@@ -39,20 +39,24 @@ public class Collector implements ApplicationRunner {
     }
 
     /**
-     *
      * @return
      * @throws Exception
      */
-    @Scheduled(fixedRate=1000 * 60 * 60 * 1)
+    @Scheduled(fixedRate = 1000 * 60 * 30)
     public Map<String, Integer> collectLikes() throws Exception {
+        int count = 0;
+        Date date = new Date();
+        SimpleDateFormat f = new SimpleDateFormat();
+        String time = f.format(date);
+        log.info("开始收集，当前时间：" + time);
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "yuexinisme");
         PreparedStatement statement = conn.prepareStatement("insert into likes (name, movie) values (?,?)");
         PreparedStatement checkState = conn.prepareStatement("select * from likes where id=? and movie=?");
         Map<String, Integer> res = new HashMap<String, Integer>();
-        for (int page = 1;; page++) {
+        for (int page = 1; ; page++) {
             Document document;
             try {
-                 document = Jsoup.connect("https://letterboxd.com/NickOfDaSouf/films/reviews/page/" + page)
+                document = Jsoup.connect("https://letterboxd.com/NickOfDaSouf/films/reviews/page/" + page)
                         .get();
             } catch (Exception e) {
                 continue;
@@ -64,15 +68,17 @@ public class Collector implements ApplicationRunner {
             if (names.size() == 0) {
                 break;
             }
-            for (Element e:names) {
+            for (Element e : names) {
                 //System.out.println(e);
                 String url = e.attr("data-likes-page");
                 String fullUrl = "https://letterboxd.com" + url;
                 //log.info(fullUrl);
-                for (int p = 1;;p++) {
+                movie:
+                for (int p = 1; ; p++) {
                     Document doc;
+                    boolean hasNew = false;
                     try {
-                         doc = Jsoup.connect(fullUrl + "page/" + p)
+                        doc = Jsoup.connect(fullUrl + "page/" + p)
                                 .get();
                     } catch (Exception eq) {
                         continue;
@@ -81,7 +87,7 @@ public class Collector implements ApplicationRunner {
                     Elements els = doc.select("h3[class=title-3]");
                     if (els.size() == 0)
                         break;
-                    for (Element e1:els) {
+                    for (Element e1 : els) {
                         int repeats = 0;
                         String name = e1.text();
                         log.info(name);
@@ -93,11 +99,13 @@ public class Collector implements ApplicationRunner {
                             //删除redis缓存
                             template.delete(name + "_COUNT");
                             mapper.add(name, fullUrl);
+                            hasNew = true;
+                            count++;
                         } else {
                             log.info("重复, name:" + name + " url: " + fullUrl);
-                            if (++repeats > 1) {
-                                break;
-                            }
+
+                            //break movie;
+
                         }
 //
 //                        if (res.containsKey(name)) {
@@ -106,11 +114,19 @@ public class Collector implements ApplicationRunner {
 //                            res.put(name, 1);
 //                        }
                     }
+                    if (!hasNew) {
+                        break;
+                    }
                 }
 
 
             }
         }
+        Date d2 = new Date();
+        String t = f.format(d2);
+        log.info("结束收集，当前时间：" + t);
+        log.info("用时：" + (d2.getTime() - date.getTime()) / 1000 / 60 + "分钟");
+        log.info("插入{}条", count);
         return res;
     }
 
