@@ -30,24 +30,13 @@ import java.util.stream.Stream;
 //@SpringBootTest
 class DemoApplicationTests {
 
-private static Boolean flag = false;
+private static int MB = 1024*1024;
+    static byte[] b1,b2,b3,b4;
 
     public static void main(String[] args) throws Exception{
-//        List<Integer> list = new ArrayList<>();
-//        list.add(2);
-//        list.add(44);
-//        Stream<Integer> stream = list.stream();
-//        Stream<Integer> s1 = stream.map(x -> x + 1);
-//        Stream<Integer> s3 = s1.map(x->x+2);
-//        List<Integer> s = s3.collect(Collectors.toList());
-        Future<?> f = Executors.newCachedThreadPool().submit(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
-        f.get();
-
+        System.out.println(new Integer(3) == new Integer(3));
+        b3 = new byte[1303 * MB];
+        //b4 = new byte[10 * MB];
     }
 //
 //	@Test
