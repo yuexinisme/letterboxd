@@ -4,11 +4,12 @@ package com.example.demo.controller;
 //import com.github.pagehelper.PageHelper;
 
 //import com.alibaba.dubbo.config.annotation.Reference;
-import com.example.demo.concurrent.A;
-import com.example.demo.concurrent.B;
 
+import com.example.ddd.bb.Bitch;
+
+import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+
 
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -34,7 +35,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.http.HttpServletResponse;
         import java.io.*;
@@ -43,7 +43,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-        import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
 /**
  * @author Nick Yuan
@@ -85,15 +84,19 @@ public class MyController {
     @Autowired
     TestService testService;
 
-    //@Reference(version = "1.3", group = "g1")
-    A a;
+    @Autowired
+    Bitch bitch;
+
+
+
+
 
 
 //    @Autowired
 //    private KafkaTemplate<String, String> kafkaTemplate;
 
 
-    @GetMapping("get")
+    @GetMapping(value = "get", produces = "application/json")
     @ResponseBody
     @CrossOrigin
     @Transactional
@@ -102,7 +105,7 @@ public class MyController {
         Long count;
         String s = null;
         s = template.opsForValue().get(name + "_COUNT");
-        if (StringUtils.isBlank(s)) {
+        if (StringUtils.isNullOrEmpty(s)) {
             log.info("query database: {}", name);
             count = likesMapper.getNum(name);
             template.opsForValue().set(name + "_COUNT", count.toString(), 1, TimeUnit.DAYS);
@@ -149,10 +152,10 @@ public class MyController {
 //        }
 //    }
 
-    @GetMapping("test")
+    @PostMapping(value = "test")
     @ResponseBody
-    public String test(@RequestParam String name, @RequestParam String val) {
-        return testService.getCount();
+    public String test() {
+        return bitch.test();
     }
 
 
