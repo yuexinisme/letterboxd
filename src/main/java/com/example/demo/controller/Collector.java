@@ -62,7 +62,7 @@ public class Collector implements ApplicationRunner {
                 continue;
             }
 
-            log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
             //System.out.println(document);
             Elements names = document.getElementsByClass("like-link-target react-component -monotone");
             if (names.size() == 0) {
@@ -90,19 +90,19 @@ public class Collector implements ApplicationRunner {
                     for (Element e1 : els) {
                         int repeats = 0;
                         String name = e1.text();
-                        log.info(name);
+                        //log.info(name);
 //                        statement.setString(1, name);
 //                        statement.setString(2, fullUrl);
                         Long num = mapper.check(name, fullUrl);
                         if (num != null && num == 0) {
-                            log.info("插入, name:" + name + " url: " + fullUrl);
+                            //log.info("插入, name:" + name + " url: " + fullUrl);
                             //删除redis缓存
                             template.delete(name + "_COUNT");
                             mapper.add(name, fullUrl);
                             hasNew = true;
                             count++;
                         } else {
-                            log.info("重复, name:" + name + " url: " + fullUrl);
+                            //log.info("重复, name:" + name + " url: " + fullUrl);
 
                             //break movie;
 

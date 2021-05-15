@@ -5,12 +5,19 @@ package com.example.demo.controller;
 
 //import com.alibaba.dubbo.config.annotation.Reference;
 
-import com.example.ddd.bb.Bitch;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.example.demo.bean.Ranking;
+import com.example.demo.concurrent.HttpUtils;
+import com.example.demo.concurrent.MyThing;
+import com.example.demo.mapper.RankingMapper;
 import com.mysql.cj.util.StringUtils;
+import jodd.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 
+import org.apache.http.client.utils.HttpClientUtils;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -24,6 +31,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -57,6 +65,11 @@ public class MyController {
     LikesMapper likesMapper;
 
     @Autowired
+    MyAss myAss;
+
+    com.example.t.controller.MyDick myDick;
+
+    @Autowired
     private RedisTemplate<String, String> template;
 
 
@@ -85,7 +98,11 @@ public class MyController {
     TestService testService;
 
     @Autowired
-    Bitch bitch;
+    private RankingMapper rankingMapper;
+
+    @Value("${tennis.wta}")
+    private String wtaUrl;
+
 
 
 
@@ -152,10 +169,11 @@ public class MyController {
 //        }
 //    }
 
-    @PostMapping(value = "test")
+    @PostMapping(value = "test", consumes = "application/xml", produces = "application/xml")
     @ResponseBody
-    public String test() {
-        return bitch.test();
+    public String test(@RequestBody MyThing myThing) {
+        return myThing.getName();
+
     }
 
 
@@ -222,6 +240,7 @@ public class MyController {
         return "x";
     }
 
+    //pull rankings from ATP website
     @GetMapping("collect")
     @ResponseBody
     public String collectRanking() throws Exception{
@@ -299,6 +318,7 @@ public class MyController {
         return "okay";
     }
 
+    //generate ATP.ini
     @GetMapping("write")
     @ResponseBody
     public String write() throws Exception {
@@ -407,6 +427,181 @@ public class MyController {
             System.out.println("name: " + s);
             System.out.println("highest: " + playerMapper.getMin(s));
         }
+        return "done";
+    }
+
+    //~~~
+    //pull rankings from WTA website
+    @GetMapping("collectWomen")
+    @ResponseBody
+    public String collectRankingWomen() throws Exception{
+        for (int i = 2000; i < 2022; i++) {
+            String date = i == 2021?"2021-05-14":i + "-12-31";
+            for (int j = 0; j < 10; j++) {
+                log.info("date: {}", date);
+                String url = wtaUrl + date + "&page=" + j;
+                log.info("url: {}", url);
+                String s = HttpUtils.doGet(url);
+                JSONArray array = JSONArray.parseArray(s);
+                Iterator<Object> iterator = array.iterator();
+                while (iterator.hasNext()) {
+                    Object next = iterator.next();
+                    JSONObject jo = JSONObject.parseObject(next.toString());
+                    Integer ranking = (Integer) jo.get("ranking");
+                    Ranking r = new Ranking();
+                    r.setYear(i);
+                    r.setNum(ranking);
+                    String player =jo.get("player").toString();
+                    JSONObject p = JSONObject.parseObject(player);
+                    String fullName = p.get("fullName").toString();
+                    r.setName(fullName);
+                    String countryCode = p.get("countryCode").toString();
+                    r.setCountry(countryCode);
+                    String dateOfBirth = p.get("dateOfBirth").toString();
+                    r.setBirthday(dateOfBirth);
+                    rankingMapper.insert(r);
+                    log.info("插入：{}", JSON.toJSONString(r));
+                }
+            }
+
+        }
+        return "okay";
+    }
+
+    //generate WTA.ini
+    @GetMapping("writeWomen")
+    @ResponseBody
+    public String writeWomen() throws Exception {
+        String prefix = "/Users/nickyuan/Downloads/";
+        FileInputStream fis = new FileInputStream(prefix + "WTA.ini");
+        InputStreamReader reader = new InputStreamReader(fis);
+        BufferedReader br = new BufferedReader(reader);
+        String line = null;
+        PrintWriter pw = new PrintWriter(prefix + "2.ini");
+        String name = null;
+        String year = null;
+        List<String> added = new ArrayList<>();
+        Integer smallest = null;
+        boolean skip = false;
+        boolean keep = false;
+        Integer first = null;
+        List<String> names = rankingMapper.getNames();
+        int count = 0;
+        while ((line = br.readLine()) != null) {
+            line = line.trim();
+            if (line.startsWith("Name")) {
+                name = line.replaceAll("Name\\s+=\\s+", "");
+                count++;
+                if (!names.contains(name)) {
+                    skip = true;
+                    pw.write(line + "\n");
+                    continue;
+                } else {
+                    skip = false;
+                }
+                names.remove(name);
+                System.out.println("得到名字 " + name);
+                //获取best ranking
+                smallest = rankingMapper.getHighestRanking(name);
+                if (smallest == 0) {
+                    throw new RuntimeException("smallest == 0");
+                }
+            }
+            if (line.startsWith("BestRank") && !skip) {
+                pw.write("BestRank\t\t=\t" + smallest + "\n");
+                continue;
+            }
+            if (line.startsWith("FirstYear") && name != null && !skip) {
+                first = rankingMapper.getFirstYear(name);
+                pw.write("FirstYear\t\t=\t" + first + "\n");
+                continue;
+            }
+            if (line.startsWith("RankPerYear") && !skip) {
+                List<String> ranks = rankingMapper.getRanks(name);
+                String join = String.join(", ", ranks);
+                pw.write("RankPerYear\t\t=\t" + join + "\n");
+                continue;
+            }
+            if ((line.startsWith("SelfEsteem") || line.startsWith("Motivation")) && !skip) {
+                if (smallest < 11) {
+                    int val = 100 - smallest;
+                    line = line.replaceAll("\\d+", String.valueOf(val));
+                }
+            }
+            pw.write(line + "\n");
+
+        }
+        count += 100;
+        for (String n:names) {
+            Ranking one = rankingMapper.getOne(n);
+            Integer highestRanking = rankingMapper.getHighestRanking(n);
+            String birthday = one.getBirthday();
+            SimpleDateFormat f1 = new SimpleDateFormat("yyyy-MM-dd");
+            Date d = f1.parse(birthday);
+            SimpleDateFormat f2 = new SimpleDateFormat("dd/MM/yyyy");
+            String date = f2.format(d);
+            pw.write("\n");
+            pw.write("[Player");
+            pw.write(count++);
+            pw.write("]\n");
+            pw.write("Name\t\t=\t" + n + "\n");
+            pw.write("Country\t\t=\t" + one.getCountry() + "\n");
+            pw.write("BestRank\t\t=\t" + highestRanking + "\n");
+            pw.write("Style\t\t=\t" + "PowerBaseliner" + "\n");
+            pw.write("Birthdate\t\t=\t" + date + "\n");
+            pw.write("Body\t\t\t=\t185 85" + "\n");
+            Integer firstYear = rankingMapper.getFirstYear(n);
+            pw.write("FirstYear\t\t=\t" + firstYear + "\n");
+            List<String> ranks = rankingMapper.getRanks(n);
+            String join = String.join(", ", ranks);
+            pw.write("RankPerYear\t\t=\t" + join + "\n");
+            pw.write("SingleDouble\t\t=\t0.25\n" +
+                    "Forehand_Power\t\t=\t46\n" +
+                    "Forehand_Consistency\t=\t18\n" +
+                    "Forehand_Precision\t=\t45\n" +
+                    "Backhand_Power\t\t=\t58\n" +
+                    "Backhand_Consistency\t=\t47\n" +
+                    "Backhand_Precision\t=\t33\n" +
+                    "Service_Power\t\t=\t19\n" +
+                    "Service_Consistency\t=\t35\n" +
+                    "Service_Precision\t=\t33\n" +
+                    "Return\t\t\t=\t53\n" +
+                    "Lob\t\t\t=\t15\n" +
+                    "Passing\t\t\t=\t80\n" +
+                    "Dropshot\t\t=\t0\n" +
+                    "Counter\t\t\t=\t4\n" +
+                    "ForehandVolley\t\t=\t32\n" +
+                    "BackhandVolley\t\t=\t32\n" +
+                    "Smash\t\t\t=\t30\n" +
+                    "NetPresence\t\t=\t32\n" +
+                    "Topspin\t\t\t=\t25\n" +
+                    "Speed\t\t\t=\t25\n" +
+                    "Stamina\t\t\t=\t33\n" +
+                    "Tonicity\t\t=\t54\n" +
+                    "Reflexes\t\t=\t0\n" +
+                    "Strength\t\t=\t1\n" +
+                    "Concentration\t\t=\t45\n" +
+                    "Focus\t\t\t=\t34\n" +
+                    "ColdBlood\t\t=\t29\n" +
+                    "Constancy\t\t=\t38\n" +
+                    "Tactic\t\t\t=\t37\n" +
+                    "Positioning\t\t=\t0\n");
+            if (highestRanking < 11) {
+                int val = 100 - highestRanking;
+                pw.write("SelfEsteem\t\t=\t" + val + "\n");
+                pw.write("Motivation\t\t=\t" + val + "\n");
+            } else {
+                pw.write("SelfEsteem\t\t=\t" + "50" + "\n");
+                pw.write("Motivation\t\t=\t" + "50" + "\n");
+            }
+            pw.write("DoubleSpirit\t\t=\t52\n" +
+                    "Hand\t\t\t=\tRight 2HBH \n");
+        }
+        pw.flush();
+        pw.close();
+        br.close();
+        reader.close();
+        fis.close();
         return "done";
     }
 }

@@ -14,3 +14,5 @@ dubbo:
 person:
   name: gaga
   age: 46
+tennis:
+  wta: https://api.wtatennis.com/tennis/players/ranked?pageSize=100&type=rankSingles&sort=asc&name=&metric=SINGLES&at=
