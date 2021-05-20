@@ -42,7 +42,7 @@ public class Collector implements ApplicationRunner {
      * @return
      * @throws Exception
      */
-    @Scheduled(fixedRate = 1000 * 60 * 30)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public Map<String, Integer> collectLikes() throws Exception {
         int count = 0;
         Date date = new Date();
