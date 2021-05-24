@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class Ranking {
 
-    private Integer id;
+     private Integer id;
 
     private String name;
 
