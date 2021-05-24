@@ -1,0 +1,59 @@
+#!/bin/bash
+set -e
+
+RELEASE=1.9
+JAR_NAME="google-java-format-${RELEASE}-all-deps.jar"
+RELEASES_URL=https://github.com/google/google-java-format/releases/download
+JAR_URL="${RELEASES_URL}/google-java-format-${RELEASE}/${JAR_NAME}"
+
+CACHE_DIR="$HOME/.cache/google-java-format-git-pre-commit-hook"
+JAR_FILE="$CACHE_DIR/$JAR_NAME"
+JAR_DOWNLOAD_FILE="${JAR_FILE}.tmp"
+JAR_PGP_ASC_FILE="${JAR_FILE}.asc"
+PGP_SIGN_KEY_ID=E77417AC194160A3FABD04969A259C7EE636C5ED
+
+if [[ ! -f "$JAR_FILE" ]]
+then
+    mkdir -p "$CACHE_DIR"
+    curl -L "$JAR_URL" -o "$JAR_DOWNLOAD_FILE"
+
+    # https://repo1.maven.org/maven2/com/google/googlejavaformat/google-java-format/1.9/google-java-format-1.9-all-deps.jar.asc
+    cat >"$JAR_PGP_ASC_FILE" <<EOF
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE53QXrBlBYKP6vQSWmiWcfuY2xe0FAl9D90cACgkQmiWcfuY2
+xe3x3BAAlZhrnH8qmUbyIOZoPmU+eBdNE5ExYOLPpuDDACQerqAKC7OR03e0SB5h
+/h5NFbL/xsGNMYDPmw3Fe/8GT6ZdqqCX+ZxS6+kbfmFMlKpFSIDbqhOTGrqJj+OF
+pkIpL3W6LI714h0ja1mXePyJdjhUoS0YfFJTPKx3V4TNYTIXVSxHv207nQiI0bnc
+peOczMTMGd33dcCjwwsMIogEZQv5RApQ4T2spWEjTdzm3ZZlVcxMdI68589axWCM
+HSLgTX7N/DHUh9yzBIc3b3JEWbr3SlqxF70/97+ZfJhHnZmcFdz2w1rlckdsIRi1
+wmQWseHN1+UaKa2c1fu3QVc7k9hjAt+qGlb85ZS7PJVW8Dy9ulKzpCbSLgDKyTsZ
+lsBryTZx0bSq9L5AVxw6kXf9NXuc7OrujvnfctOhgVRnz/7hlYLRRu3kk/bgz4ns
+eePIbXjF3i6EArl5TFHQnm+Qn3NiCnIRIdi60lEcQcJC6mRmY1891ZIECqguwWBI
+3arSWEwrQXlTPM5HXJKFPQDywBrTxu17NQhOl4gk4Ia8Nsbnzc1NxlQ9Z3hbRQCq
+MKHfq5M92zHQ4IedAnDkPIxQeaA3BkfkXYV+p0OqztT4qzk291GULeL5XPR10DBc
+ZGZvtJKi7GBUERQhMkoPttgNrt89ks3yxnfiAYGaoAt3FJpKr54=
+=ktw0
+-----END PGP SIGNATURE-----
+EOF
+
+    if ! gpg --list-keys "$PGP_SIGN_KEY_ID"
+    then
+        gpg --keyserver hkp://pgp.mit.edu --recv-key "$PGP_SIGN_KEY_ID"
+    fi
+    gpg --verify "$JAR_PGP_ASC_FILE" "$JAR_DOWNLOAD_FILE"
+    mv "$JAR_DOWNLOAD_FILE" "$JAR_FILE"
+fi
+
+changed_java_files=$(git diff --cached --name-only --diff-filter=ACMR | grep ".*java$" || true)
+if [[ -n "$changed_java_files" ]]
+then
+    echo "Reformatting Java files: $changed_java_files"
+    if ! java -jar "$JAR_FILE" --replace --set-exit-if-changed $changed_java_files
+    then
+        echo "Some files were changed, aborting commit!" >&2
+        exit 1
+    fi
+else
+    echo "No Java files changes found."
+fi

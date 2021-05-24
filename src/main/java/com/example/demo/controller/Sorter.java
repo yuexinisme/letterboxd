@@ -3,7 +3,7 @@ package com.example.demo.controller;
 public class Sorter {
 
     public static void quickSort(int[] nums, int left, int right) {
-           if (left >= right) return;
+            if (left >= right) return;
         int mid = quickSortRange(nums, left, right);
         quickSort(nums, left, mid - 1);
         quickSort(nums, mid + 1, right);
