@@ -13,8 +13,7 @@ public class MyThing {
     @JacksonXmlProperty(localName = "name")
     private String name;
 
+    @JacksonXmlProperty(localName = "age")
 
-
-          @JacksonXmlProperty(localName = "age")
     private Integer age;
 }
