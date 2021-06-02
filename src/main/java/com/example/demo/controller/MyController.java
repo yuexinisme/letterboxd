@@ -8,7 +8,7 @@ package com.example.demo.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.bean.Ranking;
+import com.example.demo.bean.*;
 import com.example.demo.concurrent.HttpUtils;
 import com.example.demo.concurrent.MyThing;
 import com.example.demo.mapper.RankingMapper;
@@ -45,7 +45,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-        import java.io.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
         import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -169,13 +176,51 @@ public class MyController {
 //        }
 //    }
 
-    @PostMapping(value = "test", consumes = "application/xml", produces = "application/xml")
+    @GetMapping(value = "test")
     @ResponseBody
-    public String test(@RequestBody MyThing myThing) {
-        return myThing.getName();
+    public String test(@RequestParam String msg_signature, @RequestParam String nonce,
+                       @RequestParam String timestamp, @RequestParam(required = false) String echostr, @RequestBody(required = false) String xml) throws AesException {
+        String sToken = "QDG6eK";
+        String sCorpID = "ww92e9e21977a625b8";
+        String sEncodingAESKey = "OTNjZTdiYmM3MDA1NDc2ZmEwNmY3YWVlZmQ0OTZmZTg";
+        WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(sToken, sEncodingAESKey, sCorpID);
+        String s = wxcpt.VerifyURL(msg_signature, nonce, timestamp, echostr);
+        return s;
 
     }
 
+    @PostMapping(value = "test")
+    @ResponseBody
+    public String test1(@RequestParam String msg_signature, @RequestParam String nonce,
+                       @RequestParam String timestamp, @RequestParam(required = false) String echostr, @RequestBody(required = false) String xml) throws AesException, JAXBException, UnsupportedEncodingException, XMLStreamException {
+        String sToken = "QDG6eK";
+        String sCorpID = "ww92e9e21977a625b8";
+        String sEncodingAESKey = "OTNjZTdiYmM3MDA1NDc2ZmEwNmY3YWVlZmQ0OTZmZTg";
+        WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(sToken, sEncodingAESKey, sCorpID);
+        log.info("xml: {}", JSON.toJSONString(xml));
+        if (xml != null) {
+            String s = wxcpt.DecryptMsg(msg_signature, timestamp, nonce, xml);
+            log.info("s : {}", s);
+            xml o = xmlToObject(s);
+            log.info("xml after: {}", JSON.toJSONString(o));
+            if (o.getSuiteTicket() != null) {
+                log.info("ticket: {}", o.getSuiteTicket());
+                template.boundValueOps("ticket").set(o.getSuiteTicket());
+            }
+            //template.boundValueOps("ticket").set(o.getSuiteTicket());
+            return "success";
+        }
+        String s = wxcpt.VerifyURL(msg_signature, nonce, timestamp, echostr);
+        return s;
+
+    }
+    public static xml xmlToObject(String xmlString) throws XMLStreamException, UnsupportedEncodingException, JAXBException {
+        StringReader sr = new StringReader(xmlString);
+        JAXBContext jaxbContext = JAXBContext.newInstance(xml.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        xml response = (xml) unmarshaller.unmarshal(sr);
+        return response;
+    }
 
     private void add(String name) {
         likesMapper.x(name);

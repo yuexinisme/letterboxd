@@ -4,6 +4,7 @@ import com.example.demo.controller.LikesMapper;
 
 //import com.github.pagehelper.PageHelper;
 import org.apache.catalina.core.ApplicationContext;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -34,9 +35,7 @@ private static int MB = 1024*1024;
     static byte[] b1,b2,b3,b4;
 
     public static void main(String[] args) throws Exception{
-        System.out.println(new Integer(3) == new Integer(3));
-        b3 = new byte[1303 * MB];
-        //b4 = new byte[10 * MB];
+        System.out.println(Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-","").getBytes()));
     }
 //
 //	@Test
