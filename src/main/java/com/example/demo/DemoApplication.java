@@ -14,6 +14,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.io.IOException;
+
 @SpringBootApplication(scanBasePackages = {"com.example.demo","com.example.ddd"})
 @MapperScan(value = {"com.example.demo.controller", "com.example.demo.mapper"})
 

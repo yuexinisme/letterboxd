@@ -447,6 +447,21 @@ public class MyController {
                 }
                 pw.write("RankPerYear\t\t=\t" + sb.toString() + "\n");
                 continue;
+            } else if (line.startsWith("RankPerYear") && skip) {
+               String ranks = line.replaceAll("RankPerYear\t\t=\t", "");
+                String[] split = ranks.split(", ");
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < split.length; i++) {
+                    String s = split[i];
+                    Integer rank = Integer.valueOf(s);
+                    if (i == 0) {
+                        sb.append(rank);
+                    } else {
+                        sb.append(", " + rank);
+                    }
+                }
+                pw.write("RankPerYear\t\t=\t" + sb.toString() + "\n");
+                continue;
             }
             if (line.startsWith("SelfEsteem") || line.startsWith("Motivation")) {
                 if (!skip && smallest < 11) {

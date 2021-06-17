@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 @Component
 @Slf4j
@@ -137,6 +139,20 @@ public class Collector implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        String command1 = "sh redis.sh";
+        try
+        {
+            Process process = Runtime.getRuntime().exec(command1);
+            Scanner kb = new Scanner(process.getInputStream());
+            while (kb.hasNext()) {
+                log.info(kb.nextLine());
+            }
+            log.info("redis started");
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            log.error("redis failed");
+        }
 //        log.info("starting collection~~~");
 //        collectLikes();
 //        Date date = null;

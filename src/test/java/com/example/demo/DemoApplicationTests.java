@@ -35,6 +35,7 @@ private static int MB = 1024*1024;
     static byte[] b1,b2,b3,b4;
 
     public static void main(String[] args) throws Exception{
+        new HashSet().add(3);
         System.out.println(Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-","").getBytes()));
     }
 //
