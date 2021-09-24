@@ -2,15 +2,23 @@ package com.example.demo.config;
 
 
 
+import com.example.demo.MyInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.security.auth.login.AccountException;
 import java.util.HashSet;
 import java.util.Set;
 
 @Configuration
-public class MyRealm {
-//    @Override
+public class MyRealm implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //registry.addInterceptor(new MyInterceptor()).addPathPatterns("/get");
+    }
+
+    //    @Override
 //    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 //        String username = (String) SecurityUtils.getSubject().getPrincipal();
 //        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();

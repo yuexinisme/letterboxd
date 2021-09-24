@@ -1,6 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.bean.Record;
+import com.example.demo.mapper.RecordMapper;
+import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,6 +35,9 @@ public class Collector implements ApplicationRunner {
 
     @Autowired
     LikesMapper mapper;
+
+    @Autowired
+    RecordMapper recordMapper;
 
     @Autowired
     private RedisTemplate<String, String> template;
@@ -134,6 +141,123 @@ public class Collector implements ApplicationRunner {
 
     public static void main(String[] args) throws Exception {
         new Collector().collectLikes();
+    }
+
+//    public void getLikesRecord() throws Exception {
+//        String id = "";
+//        while (true) {
+//            Document document;
+//            String tail = id;
+//            try {
+//                document = Jsoup.connect("https://letterboxd.com/ajax/activity-pagination/NickOfDaSouf/incoming/" + tail)
+//                        .get();
+//                log.info("tail: " + tail);
+//            } catch (Exception e) {
+//                continue;
+//            }
+//
+//            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+//            //System.out.println(document);
+//            Elements sections = document.getElementsByTag("section");
+//            log.info("size: " + sections.size());
+//            if (sections.size() == 0) {
+//                break;
+//            }
+//            id = "";
+//            for (Element e : sections) {
+//                //System.out.println(e);
+//                String attr = e.attr("data-activity-id");
+//                if (!StringUtils.isNullOrEmpty(attr)) {
+//                    id = e.attr("data-activity-id");
+//                } else {
+//                    continue;
+//                }
+//                log.info("id:" + id);
+//                String text = e.text();
+//                log.info("text: " + text);
+//                if (!text.contains("liked Nick’s")) {
+//                    continue;
+//                }
+//                Elements as = e.getElementsByTag("a");
+//                Element e1 = as.get(0);
+//                String username = e1.text().trim();
+//                Element e2 = as.get(1);
+//                String movie = e2.text().trim();
+//                Record record = new Record();
+//                record.setMovie(movie);
+//                record.setUsername(username);
+//                Elements time = e.getElementsByTag("time");
+//                String datetime = time.get(0).attr("datetime");
+//                log.info("datetime: " + datetime);
+//                datetime = datetime.substring(0, 10);
+//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//                record.setTime(format.parse(datetime));
+//                int exists = recordMapper.verify(record);
+//                if (exists > 0) {
+//                    continue;
+//                }
+//                recordMapper.save(record);
+//                log.info("插入成功 {}", record);
+//            }
+//            if (StringUtils.isNullOrEmpty(id)) {
+//                throw new RuntimeException("id == null");
+//            }
+//            id = "?after=" + id;
+//            log.info("new id: " + id);
+//        }
+//        log.info("收集完毕");
+//    }
+
+    public void checkFollowers() throws Exception {
+        int id = 0;
+        while (true) {
+            Document document;
+            int tail = ++id;
+            log.info("tail: " + tail);
+
+                document = Jsoup.connect("https://letterboxd.com/nickofdasouf/following/page/" + tail)
+                        .get();
+
+
+            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+            //System.out.println(document);
+            Elements sections = document.getElementsByClass("avatar -a40");
+            log.info("size: " + sections.size());
+            if (sections.size() == 0) {
+                break;
+            }
+            for (Element e : sections) {
+                //System.out.println(e);
+                Record record = new Record();
+                String attr = e.attr("href");
+                record.setUsername(attr);
+                String followUrl = "https://letterboxd.com/" + attr + "films/diary/";
+                log.info("followurl " + followUrl);
+                document = Jsoup.connect(followUrl)
+                        .get();
+                Elements dates = document.getElementsByClass("date");
+                log.info("dates:" + dates);
+                if (dates.size() == 0) {
+                    record.setTime(null);
+                } else {
+                    log.info("text: " + dates.get(0).text());
+                    String mouth = dates.get(0).text().substring(0, 3);
+                    String year = dates.get(0).text().substring(4, 8);
+                    if (!year.equals("2021")) {
+                        record.setTime("year");
+                    } else {
+                        record.setTime(mouth);
+                    }
+                }
+                int exists = recordMapper.verify(record);
+                if (exists > 0) {
+                    continue;
+                }
+                recordMapper.save(record);
+                log.info("插入成功 {}", record);
+            }
+        }
+        log.info("收集完毕");
     }
 
 

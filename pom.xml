@@ -72,12 +72,16 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
-<!--		<dependency>-->
-<!--			<groupId>com.github.pagehelper</groupId>-->
-<!--			<artifactId>pagehelper-spring-boot-starter</artifactId>-->
-<!--			<version>1.2.13</version>-->
-<!--		</dependency>-->
-
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+			<version>1.2.13</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -85,11 +89,6 @@
 			<version>1.12.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.10.2</version>
-		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -117,11 +116,11 @@
 <!--			<version>2.3.0-b170127.1453</version>-->
 <!--		</dependency>-->
 
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.1.2</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.sun.xml.bind</groupId>-->
+<!--			<artifactId>jaxb-impl</artifactId>-->
+<!--			<version>2.1.2</version>-->
+<!--		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-elasticsearch -->
 		<dependency>

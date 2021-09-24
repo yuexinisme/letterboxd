@@ -9,5 +9,7 @@ import org.springframework.stereotype.Component;
 //@Service
 public interface A {
 
-    String test();
+    static String test() {
+        return null;
+    }
 }

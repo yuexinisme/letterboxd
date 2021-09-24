@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.elasticsearch.common.inject.Scope;
 import org.elasticsearch.common.inject.Singleton;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -20,6 +21,8 @@ import java.util.concurrent.Future;
 
 @Data
 //@Component
+@Lazy
+@Component
 @Singleton
 @AllArgsConstructor
 @NoArgsConstructor

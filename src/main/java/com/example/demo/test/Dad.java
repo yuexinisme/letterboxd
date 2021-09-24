@@ -25,6 +25,10 @@ public class Dad implements Runnable {
         this.name = name;
     }
 
+    public Dad() {
+
+    }
+
 
     @Override
     public void run() {

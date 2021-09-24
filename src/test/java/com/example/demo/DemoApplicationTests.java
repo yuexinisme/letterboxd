@@ -3,7 +3,7 @@ package com.example.demo;
 import com.example.demo.controller.LikesMapper;
 
 //import com.github.pagehelper.PageHelper;
-import org.apache.catalina.core.ApplicationContext;
+import com.example.demo.test.Son;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -12,13 +12,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
@@ -28,28 +33,41 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//@SpringBootTest
+@SpringBootTest
+@DependsOn("son")
 class DemoApplicationTests {
 
 private static int MB = 1024*1024;
     static byte[] b1,b2,b3,b4;
 
+    @Autowired
+    ApplicationContext context;
+
     public static void main(String[] args) throws Exception{
         new HashSet().add(3);
-        System.out.println(Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-","").getBytes()));
+        LinkedList ll = new LinkedList();
+        ll.push(2);
+        ConcurrentHashMap map = new ConcurrentHashMap();
+        map.put(1,2);
+        ThreadPoolExecutor exe = new ThreadPoolExecutor(5,10,100, TimeUnit.DAYS, new ArrayBlockingQueue(5));
+        Future<?> submit = exe.submit(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+        submit.get();
+        submit.isDone();
+
+
+        //System.out.println(Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-","").getBytes()));
     }
 //
-//	@Test
-//	void add() {
-//		ClassPathXmlApplicationContext c = new ClassPathXmlApplicationContext("");
-//		c.getBean("");
-//		BeanPostProcessor d;
-//		InstantiationAwareBeanPostProcessor x;
-//		new StringBuilder().append(3);
-//		BeanPostProcessor p;
-//		InstantiationAwareBeanPostProcessor xx;
-//
-//	}
+	@Test
+	void add() {
+        Object son = context.getBean("person");
+
+    }
 //
 //	public static void main1(String[] args) throws Exception{
 //		ReentrantLock lock = new ReentrantLock();

@@ -26,13 +26,7 @@ import java.util.Set;
 public class B implements A{
 
 
-    @Override
-    public String test() {
-        int n = 3;
-        n = n >>> 1;
-        System.out.println(n);
-        return "yes";
-    }
+
     public boolean isPalindrome(String s) {
         int left = 0, right = s.length() - 1;
         char[] chars = s.toCharArray();

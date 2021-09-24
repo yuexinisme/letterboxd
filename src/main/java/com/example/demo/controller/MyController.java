@@ -10,14 +10,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.bean.*;
 import com.example.demo.concurrent.HttpUtils;
-import com.example.demo.concurrent.MyThing;
 import com.example.demo.mapper.RankingMapper;
+import com.example.demo.test.Son;
 import com.mysql.cj.util.StringUtils;
-import jodd.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 
-import org.apache.http.client.utils.HttpClientUtils;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -44,13 +42,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
         import java.text.SimpleDateFormat;
@@ -110,6 +103,11 @@ public class MyController {
     @Value("${tennis.wta}")
     private String wtaUrl;
 
+    @Resource(name = "son")
+    private Son son;
+
+    @Autowired
+    private MyService myService;
 
 
 
@@ -178,54 +176,18 @@ public class MyController {
 
     @GetMapping(value = "test")
     @ResponseBody
-    public String test(@RequestParam String msg_signature, @RequestParam String nonce,
-                       @RequestParam String timestamp, @RequestParam(required = false) String echostr, @RequestBody(required = false) String xml) throws AesException {
-        String sToken = "QDG6eK";
-        String sCorpID = "ww92e9e21977a625b8";
-        String sEncodingAESKey = "OTNjZTdiYmM3MDA1NDc2ZmEwNmY3YWVlZmQ0OTZmZTg";
-        WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(sToken, sEncodingAESKey, sCorpID);
-        String s = wxcpt.VerifyURL(msg_signature, nonce, timestamp, echostr);
-        return s;
-
+    @Transactional
+    public Object test() throws Exception {
+        likesMapper.getNum("4");
+        likesMapper.getNum("name");
+        myService.y();
+        return null;
     }
 
-    @PostMapping(value = "test")
-    @ResponseBody
-    public String test1(@RequestParam String msg_signature, @RequestParam String nonce,
-                       @RequestParam String timestamp, @RequestParam(required = false) String echostr, @RequestBody(required = false) String xml) throws AesException, JAXBException, UnsupportedEncodingException, XMLStreamException {
-        String sToken = "QDG6eK";
-        String sCorpID = "ww92e9e21977a625b8";
-        String sEncodingAESKey = "OTNjZTdiYmM3MDA1NDc2ZmEwNmY3YWVlZmQ0OTZmZTg";
-        WXBizMsgCrypt wxcpt = new WXBizMsgCrypt(sToken, sEncodingAESKey, sCorpID);
-        log.info("xml: {}", JSON.toJSONString(xml));
-        if (xml != null) {
-            String s = wxcpt.DecryptMsg(msg_signature, timestamp, nonce, xml);
-            log.info("s : {}", s);
-            xml o = xmlToObject(s);
-            log.info("xml after: {}", JSON.toJSONString(o));
-            if (o.getSuiteTicket() != null) {
-                log.info("ticket: {}", o.getSuiteTicket());
-                template.boundValueOps("ticket").set(o.getSuiteTicket());
-            }
-            //template.boundValueOps("ticket").set(o.getSuiteTicket());
-            return "success";
-        }
-        String s = wxcpt.VerifyURL(msg_signature, nonce, timestamp, echostr);
-        return s;
 
-    }
-    public static xml xmlToObject(String xmlString) throws XMLStreamException, UnsupportedEncodingException, JAXBException {
-        StringReader sr = new StringReader(xmlString);
-        JAXBContext jaxbContext = JAXBContext.newInstance(xml.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        xml response = (xml) unmarshaller.unmarshal(sr);
-        return response;
-    }
-
+    @Transactional
     private void add(String name) {
-        likesMapper.x(name);
-        Integer[] ints = {3,4};
-        Arrays.sort(ints);
+        System.out.println("");
     }
 
 
