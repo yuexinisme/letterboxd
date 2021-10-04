@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.channels.SelectionKey;
+import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
@@ -20,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Component("son")
-@Lazy
+
 public class Son implements Externalizable {
 
     {
@@ -29,6 +31,22 @@ public class Son implements Externalizable {
 
     public Son() {
         System.out.println("son was born");
+//        ExecutorService pool = Executors.newCachedThreadPool();
+//        pool.execute(null);
+//        Future<?> submit = pool.submit(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        });
+//        pool.shutdownNow();
+//        pool.shutdown();
+        SelectionKey key;
+        char[] chars = "你好".toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            System.out.println(chars[i]);
+        }
+
     }
     public Son(int age) {
         this.age = age;
@@ -71,15 +89,16 @@ public class Son implements Externalizable {
 //        Executors.newFixedThreadPool(4);
 //        nums.stream().collect(Collectors.toMap(Integer->Integer,Integer::intValue, (x1,x2)->x2));
 
-        ThreadPoolExecutor ex = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
-        ex.execute(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
-        ThreadLocal<String> local = new ThreadLocal();
-        local.remove();
+        char[] chars = "你好".toCharArray();
+        String s;
+        StringBuilder sbl;
+        for (int i = 0; i < chars.length; i++) {
+            System.out.println(chars[i] + 0);
+        }
+        ExecutorService x = Executors.newCachedThreadPool();
+        x.shutdown();
+        x.shutdownNow();
+        x.execute(null);
     }
 
 

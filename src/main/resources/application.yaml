@@ -4,7 +4,9 @@
 #      auto-offset-reset: earliest
 #    listener:
 #      ack-mode: MANUAL_IMMEDIATE
-
+mybatis:
+  configuration:
+    local-cache-scope: STATEMENT
 
 dubbo:
   application:
