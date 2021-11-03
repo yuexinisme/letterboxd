@@ -146,8 +146,9 @@ public class Collector implements ApplicationRunner {
         return res;
     }
 
+
     public static void main(String[] args) throws Exception {
-        new Collector().collectLikes();
+        System.out.println("");
     }
 
 //    public void getLikesRecord() throws Exception {

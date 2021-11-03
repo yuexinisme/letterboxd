@@ -1,5 +1,6 @@
 package com.example.demo.test;
 
+import com.example.demo.bean.MyLock;
 import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import com.github.shyiko.mysql.binlog.BinaryLogFileReader;
 import com.github.shyiko.mysql.binlog.event.Event;
@@ -7,8 +8,12 @@ import com.github.shyiko.mysql.binlog.event.EventData;
 import com.github.shyiko.mysql.binlog.event.EventType;
 import com.github.shyiko.mysql.binlog.event.WriteRowsEventData;
 import com.github.shyiko.mysql.binlog.event.deserialization.EventDeserializer;
+import lombok.Data;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 
+@Component
+@Data
 public class Dad implements Runnable {
 
     private List<String> list;
@@ -75,5 +82,10 @@ public class Dad implements Runnable {
             }
         });
         client.connect();
+    }
+
+    @MyLock(name = "katy")
+    public void t() {
+        System.out.println("xxx");
     }
 }

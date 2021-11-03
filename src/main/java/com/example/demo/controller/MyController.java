@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.demo.bean.*;
 import com.example.demo.concurrent.HttpUtils;
 import com.example.demo.mapper.RankingMapper;
+import com.example.demo.test.Dad;
 import com.example.demo.test.Son;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +50,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-        import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -112,6 +115,9 @@ public class MyController {
     @Autowired
     private MyService myService;
 
+    @Autowired
+    private Dad dad;
+
 
 
 
@@ -125,7 +131,6 @@ public class MyController {
     @ResponseBody
     @CrossOrigin
     @Transactional
-
     public Long getNum(@RequestParam("name") String name, HttpServletResponse res) {
         Long count;
         String s = null;
@@ -147,6 +152,11 @@ public class MyController {
     public void scan() throws Exception {
         int x = 5 & 3;
         collector.collectLikes();
+    }
+
+
+    public void t() {
+        System.out.println("t main");
     }
 //    @RequestMapping(value = "/login", method = RequestMethod.GET)
 //    @ResponseBody
@@ -179,9 +189,10 @@ public class MyController {
 
     @GetMapping(value = "test")
     @ResponseBody
-    public Object test() throws Exception {
-        collector.checkFollowers();
-        return null;
+    public Dad test() throws Exception {
+        Dad dad = new Dad();
+        dad.setName("gaga");
+        return dad;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

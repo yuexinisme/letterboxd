@@ -10,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.http.HttpRequestInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -22,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Component("son")
-
+@Scope("prototype")
 public class Son implements Externalizable {
 
     {
@@ -89,16 +90,10 @@ public class Son implements Externalizable {
 //        Executors.newFixedThreadPool(4);
 //        nums.stream().collect(Collectors.toMap(Integer->Integer,Integer::intValue, (x1,x2)->x2));
 
-        char[] chars = "你好".toCharArray();
-        String s;
-        StringBuilder sbl;
-        for (int i = 0; i < chars.length; i++) {
-            System.out.println(chars[i] + 0);
-        }
-        ExecutorService x = Executors.newCachedThreadPool();
-        x.shutdown();
-        x.shutdownNow();
-        x.execute(null);
+        String x = "\n".replaceAll("\\d+","");
+        System.out.println(x);
+        Date date = new Date();
+        date.getMonth();
     }
 
 
@@ -112,6 +107,7 @@ public class Son implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         age = in.read();
     }
+
 
     public Class<?> getObjectType() {
         return null;

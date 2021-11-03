@@ -24,6 +24,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
@@ -46,9 +47,13 @@ private static int MB = 1024*1024;
     public static void main(String[] args) throws Exception{
         new HashSet().add(3);
         LinkedList ll = new LinkedList();
-        ll.push(2);
-        ConcurrentHashMap map = new ConcurrentHashMap();
-        map.put(1,2);
+        ll.get(2);
+        ll.add(1,3);
+        HashMap map;
+        HashSet set;
+        //LinkedList ll = new LinkedList();
+        Integer.valueOf(2);
+        Method method;
         ThreadPoolExecutor exe = new ThreadPoolExecutor(5,10,100, TimeUnit.DAYS, new ArrayBlockingQueue(5));
         Future<?> submit = exe.submit(new Runnable() {
             @Override
@@ -58,15 +63,20 @@ private static int MB = 1024*1024;
         });
         submit.get();
         submit.isDone();
-
+        exe.getTaskCount();
 
         //System.out.println(Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-","").getBytes()));
     }
 //
 	@Test
 	void add() {
-        Object son = context.getBean("person");
-
+        Object son = context.getBean("dad");
+        Thread thread;
+        CountDownLatch l;
+        HashMap m;
+        BlockingQueue q;
+        //m.put(2,3);
+        //thread.join();
     }
 //
 //	public static void main1(String[] args) throws Exception{
