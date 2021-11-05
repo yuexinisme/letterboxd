@@ -51,7 +51,9 @@ public class Collector implements ApplicationRunner {
 
     //@Scheduled(fixedRate=2000)
     public void t() {
-        System.out.println("test一线");
+        System.out.println("test git " +
+                "" +
+                "一线");
     }
 
     /**
