@@ -53,7 +53,7 @@ public class Collector implements ApplicationRunner {
     public void t() {
         System.out.println("test git " +
                 "" +
-                "一线");
+                "一线xxx");
     }
 
     /**
