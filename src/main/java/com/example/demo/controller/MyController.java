@@ -16,10 +16,6 @@ import com.example.demo.test.Son;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.subject.Subject;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -195,35 +191,7 @@ public class MyController {
         return dad;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    @ResponseBody
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password) {
-        // 从SecurityUtils里边创建一个 subject
-        Subject subject = SecurityUtils.getSubject();
-        subject.getPrincipal();
-        // 在认证提交前准备 token（令牌）
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        // 执行认证登陆
-        try {
-            subject.login(token);
-        } catch (UnknownAccountException uae) {
-            return "未知账户";
-        } catch (IncorrectCredentialsException ice) {
-            return "密码不正确";
-        } catch (LockedAccountException lae) {
-            return "账户已锁定";
-        } catch (ExcessiveAttemptsException eae) {
-            return "用户名或密码错误次数过多";
-        } catch (Exception ae) {
-            return "用户名或密码不正确！";
-        }
-        if (subject.isAuthenticated()) {
-            return "登录成功";
-        } else {
-            token.clear();
-            return "登录失败";
-        }
-    }
+
 
     @Transactional
     private void add(String name) {

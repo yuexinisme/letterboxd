@@ -12,4 +12,6 @@ public interface RecordMapper {
     @Select("select count(1) from record where username = #{username} and followed=#{followed} and " +
             "time = #{time}")
     int verify(Record record);
+
+
 }

@@ -5,9 +5,7 @@ import com.example.demo.mapper.RecordMapper;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
-import org.apache.shiro.subject.Subject;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -243,8 +241,14 @@ public class Collector implements ApplicationRunner {
                 record.setUsername(attr);
                 String followUrl = "https://letterboxd.com/" + attr + "films/diary/";
                 log.info("followurl " + followUrl);
-                document = Jsoup.connect(followUrl)
-                        .get();
+                try {
+                    document = Jsoup.connect(followUrl)
+                            .get();
+                } catch (Exception ex) {
+                    Thread.sleep(1000);
+                    document = Jsoup.connect(followUrl)
+                            .get();
+                }
                 Elements dates = document.getElementsByClass("date");
                 log.info("dates:" + dates);
                 if (dates.size() == 0) {

@@ -7,4 +7,8 @@
         </if>
         from likes where concat('i','d') = 1;
     </select>
+
+    <select id="getLikes" resultType="com.example.demo.entity.MyEntity">
+        select id, name from likes
+    </select>
 </mapper>
