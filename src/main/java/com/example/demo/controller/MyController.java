@@ -185,10 +185,8 @@ public class MyController {
 
     @GetMapping(value = "test")
     @ResponseBody
-    public Dad test() throws Exception {
-        Dad dad = new Dad();
-        dad.setName("gaga");
-        return dad;
+    public String test() throws Exception {
+        return JSONObject.toJSONString(collector.checkUnfollowers());
     }
 
 
@@ -349,6 +347,7 @@ public class MyController {
         Integer smallest = null;
         boolean skip = false;
         boolean keep = false;
+        boolean alter = false;
         Integer first = null;
         while ((line = br.readLine()) != null) {
             line = line.trim();
@@ -357,6 +356,12 @@ public class MyController {
                 System.out.println("得到名字 " + name);
                 if ("Fabio Fognini".equals(name)) {
                     System.out.println("x");
+                }
+                Player one = playerMapper.getOne(name);
+                if (one == null) {
+                    alter = true;
+                } else {
+                    alter = false;
                 }
                 smallest = playerMapper.getMin(name);
                 if (smallest == null || smallest < 1) {
@@ -371,6 +376,10 @@ public class MyController {
                 continue;
             }
             if (line.startsWith("FirstYear") && name != null && !skip) {
+                if (alter) {
+                    first = 1990;
+                    continue;
+                }
                 Player p = playerMapper.getOne(name);
                 int born = p.getYear() - p.getAge();
                 first = Integer.parseInt(line.replaceAll("FirstYear\\s+=\\s+", ""));
@@ -423,7 +432,7 @@ public class MyController {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < split.length; i++) {
                     String s = split[i];
-                    Integer rank = Integer.valueOf(s);
+                    int rank = (int)(double)Double.valueOf(s);
                     if (i == 0) {
                         sb.append(rank);
                     } else {

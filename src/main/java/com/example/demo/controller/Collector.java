@@ -4,6 +4,18 @@ import com.example.demo.bean.Record;
 import com.example.demo.mapper.RecordMapper;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.annotations.Param;
 
 import org.jsoup.Jsoup;
@@ -23,15 +35,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -53,6 +66,71 @@ public class Collector implements ApplicationRunner {
                 "" +
                 "一线xxx");
     }
+
+    public void batchUnfollow() throws Exception {
+        //List<String> list = checkUnfollowers();
+        FileInputStream fis = new FileInputStream("/Users/nickyuan/Downloads/fuckers.txt");
+        InputStreamReader bis = new InputStreamReader(fis);
+        BufferedReader br = new BufferedReader(bis);
+        String line = null;
+        HashMap<String, String> map = new HashMap<>();
+        map.put("__csrf", "caabe091cbcfb32f2f79");
+        while ((line = br.readLine()) != null) {
+            String path = line + "unfollow/";
+            doPost(path, map);
+            Thread.sleep(1000);
+        }
+    }
+
+    public String doPost(String url, HashMap<String, String> map) throws Exception {
+        log.info("path: {}", url);
+        String result = "";
+        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
+        RequestConfig defaultRequestConfig = RequestConfig.custom().setSocketTimeout(550000).setConnectTimeout(550000)
+                .setConnectionRequestTimeout(550000).setStaleConnectionCheckEnabled(true).build();
+        client = HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig).build();
+        // client = HttpClients.createDefault();
+        URIBuilder uriBuilder = new URIBuilder(url);
+
+        HttpPost httpPost = new HttpPost(uriBuilder.build());
+        httpPost.setHeader("Connection", "Keep-Alive");
+        httpPost.setHeader("Charset", "utf-8");
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost.setHeader("cookie", "com.xk72.webparts.csrf=caabe091cbcfb32f2f79; usprivacy=1---; ad_clicker=false; _pw_fingerprint=ec3e17937c5e78c229c39afcabfae329; _pw_audience_categories=%5B%22entertainment%22%2C%22movies%22%5D; playwirePageViews=1; _pbjs_userid_consent_data=3524755945110770; pwUID=64250839803848; __gads=ID=8fe1ff97f8bc74fc:T=1642257414:S=ALNI_MbowVNPXVpwufuY-eeKWG56qYS7rQ; supermodel.user.device.cb1a3e46d8fd69f5e1bf6dea5d06e496=1DdG320Nx2hkbggrGnr9NXMxQMeRXL84sUMMU_nf2LXwhvVVQ0EfEd6x6tUoMNvwf0TZEX_DSqVvp0f14TPmMLJZm8n1LEx65cCslvuKycqu7xFqsy8VWDRLd9A69LzALpNzuERupCIRmgycsnCvadMKV2_a3..j1PAf; com.xk72.webparts.user.CURRENT=1MkSmLQtfDvvXBwUVGnd7.f2z3bJ2LLEOycgzyA9Ui8i5T8DTnXV6k8QO..u8BfAqTEsN2vO951NeQHUGZHbZI_WALhFYOaB1pRI; com.xk72.webparts.user=ad87e7695fb7ec3078aa590e414e1fd9171ce0064e885998c4115ae03d558cf3; letterboxd.signed.in.as=NickOfDaSouf");
+        Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        while (it.hasNext()) {
+            Map.Entry<String, String> entry = it.next();
+            NameValuePair pair = new BasicNameValuePair(entry.getKey(), entry.getValue());
+            params.add(pair);
+        }
+
+        httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+        try {
+            response = client.execute(httpPost);
+            if (response != null) {
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    result = EntityUtils.toString(resEntity, "utf-8");
+                }
+            }
+        } catch (ClientProtocolException e) {
+            throw new RuntimeException("创建连接失败" + e);
+        } catch (IOException e) {
+            throw new RuntimeException("创建连接失败" + e);
+        }
+        log.info("res: {}", result);
+        if (result.contains("true")) {
+            log.info("unfollow成功: " + url);
+        } else {
+            log.info("unfollow失败: " + url);
+        }
+        return result;
+    }
+
+
 
     /**
      * @return
@@ -257,7 +335,7 @@ public class Collector implements ApplicationRunner {
                     log.info("text: " + dates.get(0).text());
                     String mouth = dates.get(0).text().substring(0, 3);
                     String year = dates.get(0).text().substring(4, 8);
-                    if (!year.equals("2021")) {
+                    if (!year.equals("2021") && !year.equals("2022")) {
                         record.setTime("year");
                     } else {
                         record.setTime(mouth);
@@ -273,6 +351,79 @@ public class Collector implements ApplicationRunner {
         }
         log.info("收集完毕");
     }
+
+
+
+    public List<String> checkUnfollowers() throws Exception {
+        int id = 0;
+        List<String> followings = new ArrayList<>();
+        List<String> followers = new ArrayList<>();
+        while (true) {
+            Document document;
+            int tail = ++id;
+            log.info("tail: " + tail);
+
+            document = Jsoup.connect("https://letterboxd.com/nickofdasouf/following/page/" + tail)
+                    .get();
+
+
+            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+            //System.out.println(document);
+            Elements sections = document.getElementsByClass("avatar -a40");
+            log.info("size: " + sections.size());
+            if (sections.size() == 0) {
+                break;
+            }
+            for (Element e : sections) {
+                //System.out.println(e);
+                Record record = new Record();
+                String attr = e.attr("href");
+                followings.add(attr);
+            }
+        }
+        log.info("out");
+        id = 0;
+        while (true) {
+            Document document;
+            int tail = ++id;
+            log.info("tail: " + tail);
+
+            document = Jsoup.connect("https://letterboxd.com/nickofdasouf/followers/page/" + tail)
+                    .get();
+
+
+            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+            //System.out.println(document);
+            Elements sections = document.getElementsByClass("avatar -a40");
+            log.info("size: " + sections.size());
+            if (sections.size() == 0) {
+                break;
+            }
+            for (Element e : sections) {
+                //System.out.println(e);
+                Record record = new Record();
+                String attr = e.attr("href");
+                followers.add(attr);
+            }
+        }
+        followers.remove("/tomslotter/");
+        followings.removeAll(followers);
+        FileOutputStream fos = new FileOutputStream("/Users/nickyuan/Downloads/fuckers.txt");
+        PrintWriter pw = new PrintWriter(fos);
+        if (followings.size() == 0) {
+            return new ArrayList<>();
+        }
+        Collections.reverse(followings);
+        System.out.println(followings);
+        for (String name:followings) {
+            pw.write("https://letterboxd.com" + name + "\n");
+            pw.flush();
+        }
+        pw.close();
+        fos.close();
+        return followings;
+    }
+
 
 
     @Override
