@@ -189,6 +189,13 @@ public class MyController {
         return JSONObject.toJSONString(collector.checkUnfollowers());
     }
 
+    @GetMapping(value = "test1")
+    @ResponseBody
+    public String test1() throws Exception {
+        collector.checkFollowers();
+        return "2";
+    }
+
 
 
     @Transactional
@@ -373,6 +380,16 @@ public class MyController {
             }
             if (line.startsWith("BestRank") && !skip) {
                 pw.write("BestRank\t\t=\t" + smallest + "\n");
+                continue;
+            }
+            if (line.startsWith("BestRank") && skip) {
+                int best = smallest == null?0:smallest;
+                best += 500;
+                pw.write("BestRank\t\t=\t" + best + "\n");
+                continue;
+            }
+            if (line.startsWith("FirstYear") && skip) {
+                pw.write("FirstYear\t\t=\t" + 1980 + "\n");
                 continue;
             }
             if (line.startsWith("FirstYear") && name != null && !skip) {
@@ -642,5 +659,9 @@ public class MyController {
         reader.close();
         fis.close();
         return "done";
+    }
+
+    public static void main(String[] args) {
+        System.out.println(1.3D-1.1D > 0D);
     }
 }
