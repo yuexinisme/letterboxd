@@ -25,6 +25,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
@@ -45,25 +46,10 @@ private static int MB = 1024*1024;
     ApplicationContext context;
 
     public static void main(String[] args) throws Exception{
-        new HashSet().add(3);
-        LinkedList ll = new LinkedList();
-        ll.get(2);
-        ll.add(1,3);
-        HashMap map;
-        HashSet set;
-        //LinkedList ll = new LinkedList();
-        Integer.valueOf(2);
-        Method method;
-        ThreadPoolExecutor exe = new ThreadPoolExecutor(5,10,100, TimeUnit.DAYS, new ArrayBlockingQueue(5));
-        Future<?> submit = exe.submit(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
-        submit.get();
-        submit.isDone();
-        exe.getTaskCount();
+        double d = 2000.4;
+        BigDecimal bd = new BigDecimal(String.valueOf(d));
+        System.out.println(bd);
+        Calendar c;
 
         //System.out.println(Base64.encodeBase64String(UUID.randomUUID().toString().replaceAll("-","").getBytes()));
     }
@@ -208,4 +194,5 @@ private static int MB = 1024*1024;
 //		}
 //		return idx;
 //	}
+
 }

@@ -56,9 +56,9 @@ public class Collector implements ApplicationRunner {
 
     @Autowired
     RecordMapper recordMapper;
-
-    @Autowired
-    private RedisTemplate<String, String> template;
+//
+//    @Autowired
+//    private RedisTemplate<String, String> template;
 
     //@Scheduled(fixedRate=2000)
     public void t() {
@@ -150,7 +150,7 @@ public class Collector implements ApplicationRunner {
         for (int page = 1; ; page++) {
             Document document;
             try {
-                document = Jsoup.connect("https://letterboxd.com/NickOfDaSouf/films/reviews/page/" + page)
+                document = Jsoup.connect("https://letterboxd.com/NickOfDaSouth/films/reviews/page/" + page)
                         .get();
             } catch (Exception e) {
                 continue;
@@ -191,7 +191,7 @@ public class Collector implements ApplicationRunner {
                         if (num != null && num == 0) {
                             //log.info("插入, name:" + name + " url: " + fullUrl);
                             //删除redis缓存
-                            template.delete(name + "_COUNT");
+                            //template.delete(name + "_COUNT");
                             mapper.add(name, fullUrl);
                             hasNew = true;
                             count++;
@@ -226,7 +226,7 @@ public class Collector implements ApplicationRunner {
 
 
     public static void main(String[] args) throws Exception {
-        System.out.println("");
+        System.out.println();
     }
 
 //    public void getLikesRecord() throws Exception {
@@ -301,7 +301,7 @@ public class Collector implements ApplicationRunner {
             int tail = ++id;
             log.info("tail: " + tail);
 
-                document = Jsoup.connect("https://letterboxd.com/nickofdasouf/following/page/" + tail)
+                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
                         .get();
 
 
@@ -363,7 +363,7 @@ public class Collector implements ApplicationRunner {
             int tail = ++id;
             log.info("tail: " + tail);
 
-            document = Jsoup.connect("https://letterboxd.com/nickofdasouf/following/page/" + tail)
+            document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
                     .get();
 
 
@@ -388,7 +388,7 @@ public class Collector implements ApplicationRunner {
             int tail = ++id;
             log.info("tail: " + tail);
 
-            document = Jsoup.connect("https://letterboxd.com/nickofdasouf/followers/page/" + tail)
+            document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
                     .get();
 
 
@@ -426,22 +426,23 @@ public class Collector implements ApplicationRunner {
 
 
 
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        String command1 = "sh redis.sh";
-        try
-        {
-            Process process = Runtime.getRuntime().exec(command1);
-            Scanner kb = new Scanner(process.getInputStream());
-            while (kb.hasNext()) {
-                log.info(kb.nextLine());
-            }
-            log.info("redis started");
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            log.error("redis failed");
-        }
+//        String command1 = "sh redis.sh";
+//        try
+//        {
+//            Process process = Runtime.getRuntime().exec(command1);
+//            Scanner kb = new Scanner(process.getInputStream());
+//            while (kb.hasNext()) {
+//                log.info(kb.nextLine());
+//            }
+//            log.info("redis started");
+//        } catch (IOException e)
+//        {
+//            e.printStackTrace();
+//            log.error("redis failed");
+//        }
 //        log.info("starting collection~~~");
 //        collectLikes();
 //        Date date = null;

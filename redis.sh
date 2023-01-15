@@ -1,5 +1,4 @@
 #!/bin/sh
 echo 'started'
-cd /Users/nickyuan/downloads/redis/src
-./redis-server
+sudo systemctl restart redis-server
 echo 'started1'

@@ -16,6 +16,12 @@ import com.example.demo.test.Son;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -47,6 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -127,26 +134,32 @@ public class MyController {
     @ResponseBody
     @CrossOrigin
     @Transactional
-    public Long getNum(@RequestParam("name") String name, HttpServletResponse res) {
-        Long count;
-        String s = null;
-        s = template.opsForValue().get(name + "_COUNT");
-        if (StringUtils.isNullOrEmpty(s)) {
-            log.info("query database: {}", name);
-            count = likesMapper.getNum(name);
-            template.opsForValue().set(name + "_COUNT", count.toString(), 1, TimeUnit.DAYS);
-        } else {
-            log.info("hit redis: {}->{}", name, s);
-            return Long.valueOf(s);
-        }
-        return count;
+    public Long getNum(@RequestParam("name") String name, HttpServletResponse res) throws Exception{
+        return likesMapper.getNum(name);
+    }
 
+    @GetMapping(value = "get1", produces = "application/json")
+    @ResponseBody
+    @CrossOrigin
+    @Transactional
+    public Long getNum1(@RequestParam("name") String name, HttpServletResponse res) throws Exception{
+        HttpClient hc = new DefaultHttpClient();
+        HttpGet get = new HttpGet("http://124.220.7.103:8090/get?name=" + URLEncoder.encode(name));
+        HttpResponse response=hc.execute(get);
+        int code=response.getStatusLine().getStatusCode();
+        if(code==200){
+            HttpEntity result=response.getEntity();
+
+            //转换成string类型
+            String str= EntityUtils.toString(result);
+            return Long.valueOf(str);
+        }
+        return 0L;
     }
 
     @GetMapping("scan")
     @ResponseBody
     public void scan() throws Exception {
-        int x = 5 & 3;
         collector.collectLikes();
     }
 
