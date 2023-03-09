@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.bean.Ranking;
+import com.example.demo.bean.Review;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -29,4 +30,7 @@ public interface RankingMapper {
 
     @Select("select * from ranking where name = #{name} limit 1")
     Ranking getOne(@Param("name") String name);
+
+    @Insert("insert into review(title,number,director) values(#{review.title},#{review.number},#{review.director})")
+    void saveReview(@Param("review") Review review);
 }

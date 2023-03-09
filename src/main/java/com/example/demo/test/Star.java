@@ -1,5 +1,8 @@
 package com.example.demo.test;
 
+import com.github.pagehelper.Page;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -25,6 +28,8 @@ public enum Star {
         while (iterator.hasNext()) {
             iterator.remove();
         }
+        BeanPostProcessor p;
+        Integer.valueOf(1);
     }
 }
 

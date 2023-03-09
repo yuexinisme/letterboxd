@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.bean.Record;
+import com.example.demo.bean.Review;
+import com.example.demo.mapper.RankingMapper;
 import com.example.demo.mapper.RecordMapper;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +55,9 @@ public class Collector implements ApplicationRunner {
 
     @Autowired
     LikesMapper mapper;
+
+    @Autowired
+    private RankingMapper rankingMapper;
 
     @Autowired
     RecordMapper recordMapper;
@@ -388,8 +393,13 @@ public class Collector implements ApplicationRunner {
             int tail = ++id;
             log.info("tail: " + tail);
 
-            document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
-                    .get();
+            try {
+                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
+                        .get();
+            } catch (Exception e) {
+                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
+                        .get();
+            }
 
 
             //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
@@ -423,7 +433,6 @@ public class Collector implements ApplicationRunner {
         fos.close();
         return followings;
     }
-
 
 
 

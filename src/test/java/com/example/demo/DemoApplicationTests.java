@@ -56,7 +56,7 @@ private static int MB = 1024*1024;
 //
 	@Test
 	void add() {
-        Object son = context.getBean("dad");
+        Object son = context.getBean("customer");
         Thread thread;
         CountDownLatch l;
         HashMap m;

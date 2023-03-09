@@ -30,6 +30,8 @@ public class Son implements Externalizable {
         System.out.println("son static");
     }
 
+    String s = new String("");
+
     public Son() {
         System.out.println("son was born");
 //        ExecutorService pool = Executors.newCachedThreadPool();
@@ -47,6 +49,7 @@ public class Son implements Externalizable {
         for (int i = 0; i < chars.length; i++) {
             System.out.println(chars[i]);
         }
+        new Thread().start();
 
     }
     public Son(int age) {
@@ -60,40 +63,7 @@ public class Son implements Externalizable {
     static List<String> list = new ArrayList<>();
 
     public static void main(String[] args) throws Exception{
-        Executors.newCachedThreadPool();
-
-//        Book book = new Book("book of love");
-//        book.setName("book of love");
-//        FileOutputStream fos = new FileOutputStream("/Users/nickyuan/Downloads/1.txt");
-//        ObjectOutputStream oos = new ObjectOutputStream(fos);
-//        oos.writeObject(book);
-//        oos.close();
-//        fos.close();
-//        FileInputStream fis = new FileInputStream("/Users/nickyuan/Downloads/1.txt");
-//        ObjectInputStream ois = new ObjectInputStream(fis);
-//        Book o = (Book) ois.readObject();
-//        System.out.println(o.getName());
-//        HttpRequestInterceptor g;
-//        String a = "1";
-//        String b = "21";
-//        String c = a + b;
-//        String d = "121";
-//        System.out.println(c == d.intern());
-//        HashMap m = new HashMap();
-//        m.keySet();
-//        List<Integer> nums = new ArrayList<>();
-//        nums.add(1);
-//        nums.add(2);
-//        nums.add(2);
-//        Executors.newCachedThreadPool();
-//        Executors.newSingleThreadExecutor();
-//        Executors.newFixedThreadPool(4);
-//        nums.stream().collect(Collectors.toMap(Integer->Integer,Integer::intValue, (x1,x2)->x2));
-
-        String x = "\n".replaceAll("\\d+","");
-        System.out.println(x);
-        Date date = new Date();
-        date.getMonth();
+new Son();
     }
 
 

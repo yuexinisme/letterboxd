@@ -86,6 +86,7 @@ public class Dad implements Runnable {
 
     @MyLock(name = "katy")
     public void t() {
+        new StringBuilder().append(1);
         System.out.println("xxx");
     }
 }

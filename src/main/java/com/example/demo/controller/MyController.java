@@ -674,7 +674,59 @@ public class MyController {
         return "done";
     }
 
+    @ResponseBody
+    @GetMapping("cahier")
+    public String cahier() throws Exception {
+        int tail = 1;
+        while (tail < 286) {
+            tail++;
+            Document document;
+            log.info("tail: " + tail);
+            document = Jsoup.connect("https://www.allocine.fr/presse-82005/critiques/cinema/?page=" + tail)
+                    .get();
+
+
+            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+            //System.out.println(document);
+            Elements sections = document.getElementsByClass("card entity-card entity-card-list cf hred");
+            log.info("size: " + sections.size());
+            if (sections.size() == 0) {
+                break;
+            }
+            for (Element e : sections) {
+                //System.out.println(e);
+                com.example.demo.bean.Review record = new com.example.demo.bean.Review();
+                Elements els = e.getElementsByClass("meta-title-link");
+                Element e1 = els.get(0);
+                record.setTitle(e1.text().trim());
+                Elements els1 = e.getElementsByClass("stareval stareval-medium stareval-theme-default");
+                Element e2 = els1.get(0);
+                record.setNumber(Integer.valueOf(e2.text().trim().split(",")[0]));
+                try {
+                    log.info(e1.attr("href"));
+                    document = Jsoup.connect("https://www.allocine.fr" + e1.attr("href"))
+                            .get();
+                } catch (Exception ex) {
+                    Thread.sleep(1000);
+                }
+                Elements dates = document.getElementsByClass("meta-body-item meta-body-direction");
+                if (dates.size() == 0) {
+                    record.setDirector(null);
+                } else {
+                    Element d = dates.get(0);
+                    record.setDirector(d.text().trim());
+                }
+                rankingMapper.saveReview(record);
+                log.info("插入成功 {}", record);
+            }
+        }
+        log.info("收集完毕");
+        return "1";
+    }
+
     public static void main(String[] args) {
         System.out.println(1.3D-1.1D > 0D);
     }
+
+
 }
