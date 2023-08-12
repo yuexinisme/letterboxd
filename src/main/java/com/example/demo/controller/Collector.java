@@ -340,7 +340,7 @@ public class Collector implements ApplicationRunner {
                     log.info("text: " + dates.get(0).text());
                     String mouth = dates.get(0).text().substring(0, 3);
                     String year = dates.get(0).text().substring(4, 8);
-                    if (!year.equals("2021") && !year.equals("2022")) {
+                    if (!year.equals("2023")) {
                         record.setTime("year");
                     } else {
                         record.setTime(mouth);

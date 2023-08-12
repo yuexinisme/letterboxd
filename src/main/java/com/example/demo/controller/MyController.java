@@ -138,6 +138,14 @@ public class MyController {
         return likesMapper.getNum(name);
     }
 
+    @GetMapping(value = "get10", produces = "application/json")
+    @ResponseBody
+    @CrossOrigin
+    @Transactional
+    public Long get10(@RequestParam("name") String name, HttpServletResponse res) throws Exception{
+        return likesMapper.get10(name);
+    }
+
     @GetMapping(value = "get1", produces = "application/json")
     @ResponseBody
     @CrossOrigin

@@ -59,6 +59,7 @@ private static int MB = 1024*1024;
         Object son = context.getBean("customer");
         Thread thread;
         CountDownLatch l;
+        BeanPostProcessor p;
         HashMap m;
         BlockingQueue q;
         //m.put(2,3);
