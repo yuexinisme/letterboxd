@@ -73,10 +73,6 @@ public class MyController {
     @Autowired
     LikesMapper likesMapper;
 
-    @Autowired
-    MyAss myAss;
-
-    com.example.t.controller.MyDick myDick;
 
     @Autowired
     private RedisTemplate<String, String> template;
