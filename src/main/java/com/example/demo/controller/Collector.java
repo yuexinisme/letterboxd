@@ -418,19 +418,8 @@ public class Collector implements ApplicationRunner {
         }
         followers.remove("/tomslotter/");
         followings.removeAll(followers);
-        FileOutputStream fos = new FileOutputStream("/Users/nickyuan/Downloads/fuckers.txt");
-        PrintWriter pw = new PrintWriter(fos);
-        if (followings.size() == 0) {
-            return new ArrayList<>();
-        }
         Collections.reverse(followings);
         System.out.println(followings);
-        for (String name:followings) {
-            pw.write("https://letterboxd.com" + name + "\n");
-            pw.flush();
-        }
-        pw.close();
-        fos.close();
         return followings;
     }
 

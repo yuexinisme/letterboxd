@@ -35,6 +35,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -79,6 +80,7 @@ public class MyController {
 
 
     @Autowired
+    @Qualifier
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -138,7 +140,7 @@ public class MyController {
     @ResponseBody
     @CrossOrigin
     @Transactional
-    public Long get10(@RequestParam("name") String name, HttpServletResponse res) throws Exception{
+    public String get10(@RequestParam("name") String name, HttpServletResponse res) throws Exception{
         return likesMapper.get10(name);
     }
 

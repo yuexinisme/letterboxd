@@ -22,7 +22,6 @@ public interface LikesMapper {
     @Insert("insert into people values('${name}')")
     void x(String name);
 
-    @Select("select count(movie) c from likes where name=#{name}" +
-            "and to_days(t) >= to_days(DATE_SUB(NOW(), INTERVAL 10 DAY))")
-    Long get10(String name);
+    @Select("select DATE(max(t)) from likes where name=#{name}")
+    String get10(String name);
 }
