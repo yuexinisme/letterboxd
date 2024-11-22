@@ -65,8 +65,8 @@ public class CsvProcessor {
         }
         // Iterate over beans and update tags if empty
         int count = 0;
-        for (int i = 1000; i < beans.size(); i++) {
-            if (count == 270) {
+        for (int i = 24100; i < beans.size(); i++) {
+            if (count == 550) {
                 break;
             }
             Bean bean = beans.get(i);

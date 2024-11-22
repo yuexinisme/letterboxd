@@ -14,36 +14,51 @@ import java.util.concurrent.Future;
 
 public class WebCrawler {
 
-    static private final List<String> BadWords = new ArrayList<>();
+    static public final List<String> BadWords = new ArrayList<>();
 
     static final private ExecutorService pool = Executors.newFixedThreadPool(2);
 
-    {
+    static {
         BadWords.add("male nudity");
         BadWords.add("male rape");
         BadWords.add("gay rape");
-        BadWords.add("gay");
         BadWords.add("gay sex");
-        BadWords.add("gang rape");
         BadWords.add("male frontal nudity");
         BadWords.add("male rear nudity");
-
         BadWords.add("gay cinema");
         BadWords.add("gay protagonist");
-        BadWords.add("lgbtq");
+        BadWords.add("lgbt");
         BadWords.add("older man younger man relationship");
         BadWords.add("explicit sex");
         BadWords.add("gay interest");
-
         BadWords.add("male full frontal nudity");
         BadWords.add("erection");
         BadWords.add("homoerotic");
-        BadWords.add("straight boys kiss");
-
         BadWords.add("penis");
         BadWords.add("unsimulated sex");
         BadWords.add("homoerotism");
         BadWords.add("homosexual");
+        BadWords.add("queer");
+        BadWords.add("male pubic hair");
+        BadWords.add("group sex");
+        BadWords.add("illuminati");
+        BadWords.add("cunnilingus");
+        BadWords.add("anal rape");
+        BadWords.add("anal sex");
+        BadWords.add("kissing someone's breasts");
+        BadWords.add("69 sex position");
+        BadWords.add("ancient astronaut");
+        BadWords.add("bareback sex");
+        BadWords.add("breast sucking");
+        BadWords.add("older man younger man");
+        BadWords.add("older man younger woman");
+        BadWords.add("male prostitution");
+        BadWords.add("male prostitute");
+        BadWords.add("forced to watch rape");
+        BadWords.add("cavity");
+        BadWords.add("sex ritual");
+        BadWords.add("naked");
+        BadWords.add("breast fondling");
     }
 
     public static List<String> crawlUrls(String url) throws Exception {

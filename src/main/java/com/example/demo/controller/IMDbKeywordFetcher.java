@@ -26,7 +26,7 @@ public class IMDbKeywordFetcher {
     public static List<String> getIMDbKeywords(String imdbId) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://imdb-com.p.rapidapi.com/title/get-keywords?tconst=" + imdbId + "&limit=1000"))
-                .header("x-rapidapi-key", "88d8eb3e99msh53940a4107d1005p16dd9djsn474c000e7da8")
+                .header("x-rapidapi-key", "9b1681d44dmshec4192628c23777p1366a2jsn7a0b8b95fbb2")
                 .header("x-rapidapi-host", "imdb-com.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();

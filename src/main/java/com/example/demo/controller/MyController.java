@@ -14,6 +14,7 @@ import com.example.demo.mapper.RankingMapper;
 import com.example.demo.test.Dad;
 import com.example.demo.test.Son;
 import com.mysql.cj.util.StringUtils;
+import jodd.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.http.HttpEntity;
@@ -22,6 +23,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.common.util.CollectionUtils;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
         import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -201,6 +203,15 @@ public class MyController {
 //            return "登录失败";
 //        }
 //    }
+
+    List objectList = new ArrayList();
+
+    @GetMapping("/oom")
+    public String createOOM() {
+        while (true) {
+            objectList.add(new byte[1024*1024*10000]); // Constantly adding new objects to list
+        }
+    }
 
     @GetMapping(value = "test")
     @ResponseBody
@@ -681,6 +692,65 @@ public class MyController {
     }
 
     @ResponseBody
+    @GetMapping("csv")
+    public String csv(@RequestParam String tag) throws Exception {
+        HashMap<String, List<String>> maps = TestService.maps;
+        TreeSet<String> set = new TreeSet<>();
+        Set<String> keys = maps.keySet();
+        for (String k:keys) {
+            if (k.contains(tag)) {
+                set.addAll(maps.get(k));
+            }
+        }
+        if (set.size() != 0) {
+            StringBuffer sb = new StringBuffer();
+            for (String l:set) {
+                sb.insert(0, l.replaceAll(tag, "<span style=\"color:red;\">" + tag + "</span>"));
+                sb.insert(0, "<br><br>");
+            }
+            return sb.toString();
+        }
+        return "";
+    }
+
+    @ResponseBody
+    @GetMapping("csvAll")
+    public String csvAll() throws Exception {
+        HashMap<String, List<String>> maps = TestService.maps;
+        TreeSet<String> set = new TreeSet<>();
+        Set<String> keys = maps.keySet();
+        for (String k:keys) {
+            for (String word:WebCrawler.BadWords) {
+                if (k.contains(word) && (k.indexOf(word) == 0 || k.charAt(k.indexOf(word) - 1) == ' ' || k.charAt(k.indexOf(word) - 1) == '/')) {
+                    set.addAll(maps.get(k));
+                }
+            }
+        }
+        if (set.size() != 0) {
+            StringBuffer sb = new StringBuffer();
+            for (String l:set) {
+                for (String word:WebCrawler.BadWords) {
+                    if (!l.contains(word)) {
+                        continue;
+                    }
+                    if (l.startsWith(word)) {
+                        l = l.replace(word, "<span style=\"color:red;\">" + word + "</span>");
+                    }
+                    else if (l.contains("//" + word)) {
+                        l = l.replaceAll("//" + word, "//<span style=\"color:red;\">" + word + "</span>");
+                    } else if (l.contains(" " + word)) {
+                        l = l.replaceAll(" " + word, " <span style=\"color:red;\">" + word + "</span>");
+                    }
+                }
+                sb.insert(0, l);
+                sb.insert(0, "<br><br>");
+            }
+            return sb.toString();
+        }
+        return "";
+    }
+
+    @ResponseBody
     @GetMapping("cahier")
     public String cahier() throws Exception {
         int tail = 1;
@@ -731,7 +801,24 @@ public class MyController {
     }
 
     public static void main(String[] args) {
-        System.out.println(1.3D-1.1D > 0D);
+        StringBuffer sb = new StringBuffer();
+        HashSet<String> set = new HashSet<>();
+        set.add("political drama//1970s//year 1977//year 1974//20th century//watergate//political leader//cold war era//u.s. politician//reference to richard nixon//american politician//interview//telephone call//reference to john f. kennedy//reference to leonid brezhnev//checkbook journalism//reference to henry kissinger//beverly hills hotel//reference to gerald ford//speaker phone//vietnam war//tv journalism//publicly disgraced//surnames as title//character names as title//the white house washington d.c.//washington post//flight//jumbo jet//flying first class//united states of america//worrying//reference to h.r. haldeman//fbi federal bureau of investigation//lincoln continental//nixon//tv talk show as subject//tv show as subject//talk show as subject//female nudity//president//resignation//scandal//battle of wits//guilt//reporter//telephone//chief of staff//camera//president of the united states//talk show host//apology//broken lightbulb//shoebox//reference to vidal sassoon//reference to edward kennedy//reference to lyndon b. johnson//reference to andrei gromyko//plaza hotel//reference to mike wallace//reference to william holden//american politics//sex//champagne//bentley the car//multiple narrators//father daughter relationship//photograph//cinerama theatre hollywood//obstruction of justice//taxes//flashback//flash forward//t 47//tv control booth//celebration//plaza hotel manhattan new york city//sardi's restaurant manhattan new york city//manhattan new york city//party//beach//running in place//advertisement//tv commercial//exoneration//banquet//wiretap//historical event//backstage//water//eating//tv ratings//phlebitis//wheelchair//gurney//reference to ibm//reference to alpo dog food//reference to general motors//confession//autograph//perspiration//brother brother relationship//father son relationship//death of brother//death//injustice//justice//cover up//motorcycle//photographer//media frenzy//witness//felony//reputation//los angeles international airport//taxi//hotel//nonlinear timeline//tv network executive//quaker//birthday cake//birthday//safe//tape recorder//los angeles times//reference to diahann carroll//helicopter//reference to jack anderson//reference to carl stern//reference to charles colson//reference to john ehrlichman//reference to john dean//motorcade//limousine//mirror//talking to the camera//recording//research//paranoia//tv news//impeachment//earphones//microphone//makeup artist//makeup//airport//hush money//u.s. constitution//lie//tyranny//u.s. supreme court//prayer//religion//reference to nikita khrushchev//reference to mao tse tung//reference to michael york//song//restaurant//eyeglasses//memory loss//london england//new york city//washington d.c.//literary agent//burglary//montage//watching tv//newsreel footage//golf//drink//drinking//attorney//lawyer//reference to the bee gees//voice over narration//san clemente california//gift//male male hug//hugging//nervousness//record album//record player//reel to reel tape recorder//exercise//newspaper clipping//bedroom//piano playing//handshake//glass of water//self confidence//tv monitor//mob of reporters//movie premiere//singing//singer//imitation//golf cart//car//sweating//rage//anger//speech//cigar smoking//pay phone//check//tv sponsor//los angeles california//alcoholic drink//self deprecation//escape artist//sydney australia//beverly hills california//airplane//handkerchief//memoir//husband wife relationship//hospital//television studio//skinny dipping//stripping//rear nudity//male nudity//nudity//cafeteria//australia//playboy bunny//comedian//political resignation//nixon resignation//author//television director//resigning from a job//shallowness//television camera//archive audio tape//italian shoes//shoes//cheeseburger//political aide//drunkenness//slash in title//f word//drunken telephone call//political cover up//dachshund//television host//tape recording//self loathing//self justification//sanctimony//researcher//republican//republican party//presidential aide//politics");
+        for (String l:set) {
+            String word = "male nudity";
+            System.out.println(l.indexOf(word));
+            System.out.println(l.charAt(l.indexOf(word) - 1));
+                if (!l.contains(word)) {
+                    continue;
+                }
+                if (l.indexOf(word) == 0 || (char)l.charAt(l.indexOf(word) - 1) == ' ' || l.charAt(l.indexOf(word) - 1) == '/') {
+                    l = l.replaceAll(word, "<span style=\"color:red;\">" + word + "</span>");
+                }
+
+            sb.insert(0, l);
+            sb.insert(0, "<br><br>");
+        }
+        System.out.println(sb.toString());
     }
 
 
