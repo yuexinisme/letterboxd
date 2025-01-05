@@ -368,8 +368,13 @@ public class Collector implements ApplicationRunner {
             int tail = ++id;
             log.info("tail: " + tail);
 
-            document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
-                    .get();
+            try {
+                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
+                        .get();
+            } catch (Exception e) {
+                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
+                        .get();
+            }
 
 
             //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
