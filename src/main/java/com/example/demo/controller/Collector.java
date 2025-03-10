@@ -358,14 +358,14 @@ public class Collector implements ApplicationRunner {
     }
 
 
+    static int id1 = 0, id2 = 0;
+    static List<String> followings = new ArrayList<>();
+    static List<String> followers = new ArrayList<>();
 
     public List<String> checkUnfollowers() throws Exception {
-        int id = 0;
-        List<String> followings = new ArrayList<>();
-        List<String> followers = new ArrayList<>();
         while (true) {
             Document document;
-            int tail = ++id;
+            int tail = id1++;
             log.info("tail: " + tail);
 
             try {
@@ -392,10 +392,9 @@ public class Collector implements ApplicationRunner {
             }
         }
         log.info("out");
-        id = 0;
         while (true) {
             Document document;
-            int tail = ++id;
+            int tail = id2++;
             log.info("tail: " + tail);
 
             try {

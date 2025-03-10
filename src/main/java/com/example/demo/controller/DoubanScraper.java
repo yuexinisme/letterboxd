@@ -16,7 +16,7 @@ public class DoubanScraper {
     // Function to scrape the movie list and perform curl with each IMDb code
     public static List<String> getMovieImdbCodesAndCurl(String imdbId, String douId) {
         List<String> imdbCodes = new ArrayList<>();
-        int start = 1200;
+        int start = 0;
 
         while (true) {
             try {
@@ -141,7 +141,7 @@ public class DoubanScraper {
     }
 
     public static void main(String[] args) {
-        String imdbId = "ls548461897", douId = "151129652";  // Example IMDb list ID (this is the input)
+        String imdbId = "ls597280780", douId = "41027468";  // Example IMDb list ID (this is the input)
         getMovieImdbCodesAndCurl(imdbId, douId);
     }
 }

@@ -18,7 +18,7 @@ public class GettyImageDownloader {
     private static String SEARCH_URL_TEMPLATE = BASE_URL + "/search/2/image?family=editorial&phrase=%s&sort=newest&page=%d";
 
     public static void main(String[] args) throws Exception {
-        String searchTerm = "\"Lee Jung-jae\""; // Replace with your search term
+        String searchTerm = "\"yung gravy\""; // Replace with your search term
         SEARCH_URL_TEMPLATE += "&numberofpeople=one";
         //SEARCH_URL_TEMPLATE += "&compositions=headshot";
         searchTerm = URLEncoder.encode(searchTerm, "utf-8");
@@ -35,7 +35,7 @@ public class GettyImageDownloader {
         }
 
         while (hasNextPage) {
-            if (pageNum == 20) {
+            if (pageNum == 10) {
                 break;
             }
             try {
