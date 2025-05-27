@@ -15,12 +15,14 @@ import java.nio.file.Files;
 public class GettyImageDownloader {
 
     private static final String BASE_URL = "https://www.gettyimages.com";
-    private static String SEARCH_URL_TEMPLATE = BASE_URL + "/search/2/image?family=editorial&phrase=%s&sort=newest&page=%d";
+    private static String SEARCH_URL_TEMPLATE = BASE_URL + "/search/2/image?family=editorial&phrase=%s&page=%d";
 
     public static void main(String[] args) throws Exception {
-        String searchTerm = "\"yung gravy\""; // Replace with your search term
+        String searchTerm = "\"Kleber Mendonça Filho\""; // Replace with your search term
         SEARCH_URL_TEMPLATE += "&numberofpeople=one";
-        //SEARCH_URL_TEMPLATE += "&compositions=headshot";
+        //SEARCH_URL_TEMPLATE += "&begindate=2013-12-30&enddate=2016-12-31";
+        SEARCH_URL_TEMPLATE += "&sort=newest";
+        //SEARCH_URL_TEMPLATE += "&specificpeople=553788";
         searchTerm = URLEncoder.encode(searchTerm, "utf-8");
         downloadImages(searchTerm);
     }
@@ -35,7 +37,7 @@ public class GettyImageDownloader {
         }
 
         while (hasNextPage) {
-            if (pageNum == 10) {
+            if (pageNum == 27) {
                 break;
             }
             try {

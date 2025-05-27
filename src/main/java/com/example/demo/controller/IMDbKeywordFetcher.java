@@ -57,12 +57,13 @@ public class IMDbKeywordFetcher {
     }
 
     public static void main(String[] args) {
-        try {
-            List<String> keywords = getIMDbKeywords("tt0156701"); // Example IMDb ID for "The Shawshank Redemption"
-            System.out.println("Keywords: " + keywords);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            List<String> keywords = getIMDbKeywords("tt0156701"); // Example IMDb ID for "The Shawshank Redemption"
+//            System.out.println("Keywords: " + keywords);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
     }
 }
 

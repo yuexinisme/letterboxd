@@ -521,8 +521,8 @@ public class MyController {
     @GetMapping("collectWomen")
     @ResponseBody
     public String collectRankingWomen() throws Exception{
-        for (int i = 2000; i < 2022; i++) {
-            String date = i == 2021?"2021-05-14":i + "-12-31";
+        for (int i = 2000; i < 2026; i++) {
+            String date = i == 2025?"2025-05-12":i + "-12-31";
             for (int j = 0; j < 10; j++) {
                 log.info("date: {}", date);
                 String url = wtaUrl + date + "&page=" + j;

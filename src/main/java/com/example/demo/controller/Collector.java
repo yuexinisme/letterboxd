@@ -154,6 +154,7 @@ public class Collector implements ApplicationRunner {
         Map<String, Integer> res = new HashMap<String, Integer>();
         for (int page = 1; ; page++) {
             Document document;
+            log.info("page:" + page);
             try {
                 document = Jsoup.connect("https://letterboxd.com/NickOfDaSouth/films/reviews/page/" + page)
                         .get();
@@ -161,9 +162,9 @@ public class Collector implements ApplicationRunner {
                 continue;
             }
 
-            //log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
+            log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
             //System.out.println(document);
-            Elements names = document.getElementsByClass("like-link-target react-component -monotone");
+            Elements names = document.getElementsByClass("like-link-target react-component");
             if (names.size() == 0) {
                 break;
             }
@@ -171,7 +172,7 @@ public class Collector implements ApplicationRunner {
                 //System.out.println(e);
                 String url = e.attr("data-likes-page");
                 String fullUrl = "https://letterboxd.com" + url;
-                //log.info(fullUrl);
+                log.info(fullUrl);
                 movie:
                 for (int p = 1; ; p++) {
                     Document doc;
@@ -189,12 +190,12 @@ public class Collector implements ApplicationRunner {
                     for (Element e1 : els) {
                         int repeats = 0;
                         String name = e1.text();
-                        //log.info(name);
+                        log.info(name);
 //                        statement.setString(1, name);
 //                        statement.setString(2, fullUrl);
                         Long num = mapper.check(name, fullUrl);
                         if (num != null && num == 0) {
-                            //log.info("插入, name:" + name + " url: " + fullUrl);
+                            log.info("插入, name:" + name + " url: " + fullUrl);
                             //删除redis缓存
                             //template.delete(name + "_COUNT");
                             mapper.add(name, fullUrl);
