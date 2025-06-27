@@ -18,11 +18,11 @@ public class GettyImageDownloader {
     private static String SEARCH_URL_TEMPLATE = BASE_URL + "/search/2/image?family=editorial&phrase=%s&page=%d";
 
     public static void main(String[] args) throws Exception {
-        String searchTerm = "\"Kleber Mendonça Filho\""; // Replace with your search term
-        SEARCH_URL_TEMPLATE += "&numberofpeople=one";
+        String searchTerm = "\"jonathan bailey\""; // Replace with your search term
+        //SEARCH_URL_TEMPLATE += "&numberofpeople=one";
         //SEARCH_URL_TEMPLATE += "&begindate=2013-12-30&enddate=2016-12-31";
         SEARCH_URL_TEMPLATE += "&sort=newest";
-        //SEARCH_URL_TEMPLATE += "&specificpeople=553788";
+        //SEARCH_URL_TEMPLATE += "&specificpeople=22007454";
         searchTerm = URLEncoder.encode(searchTerm, "utf-8");
         downloadImages(searchTerm);
     }
@@ -37,7 +37,7 @@ public class GettyImageDownloader {
         }
 
         while (hasNextPage) {
-            if (pageNum == 27) {
+            if (pageNum == 11) {
                 break;
             }
             try {

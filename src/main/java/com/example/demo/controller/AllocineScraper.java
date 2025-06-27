@@ -17,9 +17,9 @@ public class AllocineScraper {
     public static void main(String[] args) throws Exception {
         initDB();
 
-        int page = 201;
+        int page = 2;
         while (true) {
-            if (page >= 322) {
+            if (page >= 3) {
                 break;
             }
             System.out.println("📄 正在处理第 " + page + " 页...");
