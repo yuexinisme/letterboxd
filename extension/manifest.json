@@ -1,19 +1,13 @@
- {
+{
+  "manifest_version": 3,
   "name": "Letterboxd Helper",
-  "version": "1.0",
-  "description": "catch all your sneaky followers who never like back lol",
-  "background": {
-      "scripts": ["background.js"],
-      "persistent": false
-    },
-    "content_scripts": 
-	[
-		{
-			"matches": ["<all_urls>"],
-			"js": ["background.js"],
-			"run_at": "document_end"
-		}
-	],
-	"web_accessible_resources": ["background.js"],
-  "manifest_version": 2
+  "version": "1.0.0",
+  "description": "Assign the mentioned member as the assignee with keyboard shortcuts.",
+  "permissions": ["activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["background.js"]
+    }
+  ]
 }
