@@ -121,6 +121,9 @@ public class MyController {
     @Autowired
     private Dad dad;
 
+    @Autowired
+    PlaywrightLetterboxdScraper playwrightLetterboxdScraper;
+
 
 
 
@@ -222,7 +225,7 @@ public class MyController {
     @GetMapping(value = "test1")
     @ResponseBody
     public String test1() throws Exception {
-        collector.checkFollowers();
+        playwrightLetterboxdScraper.collectLikesWithPlaywright();
         return "2";
     }
 
@@ -287,6 +290,20 @@ public class MyController {
     @ResponseBody
     public String get(@RequestParam String msg) {
         //kafkaTemplate.send("kaka", "demo", msg);
+        return "x";
+    }
+
+    @GetMapping("add")
+    @ResponseBody
+    @CrossOrigin
+    public String add(@RequestParam String name1, @RequestParam String name2) {
+        Long num = likesMapper.check(name1, name2);
+        if (num > 0) {
+            log.info(name1+":"+name2+" 重复");
+            return "xx";
+        }
+        likesMapper.add(name1, name2);
+        log.info(name1+":"+name2 + " 插入成功");
         return "x";
     }
 
@@ -713,42 +730,7 @@ public class MyController {
         return "";
     }
 
-    @ResponseBody
-    @GetMapping("csvAll")
-    public String csvAll() throws Exception {
-        HashMap<String, List<String>> maps = TestService.maps;
-        TreeSet<String> set = new TreeSet<>();
-        Set<String> keys = maps.keySet();
-        for (String k:keys) {
-            for (String word:WebCrawler.BadWords) {
-                if (k.contains(word) && (k.indexOf(word) == 0 || k.charAt(k.indexOf(word) - 1) == ' ' || k.charAt(k.indexOf(word) - 1) == '/')) {
-                    set.addAll(maps.get(k));
-                }
-            }
-        }
-        if (set.size() != 0) {
-            StringBuffer sb = new StringBuffer();
-            for (String l:set) {
-                for (String word:WebCrawler.BadWords) {
-                    if (!l.contains(word)) {
-                        continue;
-                    }
-                    if (l.startsWith(word)) {
-                        l = l.replace(word, "<span style=\"color:red;\">" + word + "</span>");
-                    }
-                    else if (l.contains("//" + word)) {
-                        l = l.replaceAll("//" + word, "//<span style=\"color:red;\">" + word + "</span>");
-                    } else if (l.contains(" " + word)) {
-                        l = l.replaceAll(" " + word, " <span style=\"color:red;\">" + word + "</span>");
-                    }
-                }
-                sb.insert(0, l);
-                sb.insert(0, "<br><br>");
-            }
-            return sb.toString();
-        }
-        return "";
-    }
+
 
     @ResponseBody
     @GetMapping("cahier")

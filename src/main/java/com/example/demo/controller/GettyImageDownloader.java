@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GettyImageDownloader {
 
@@ -18,12 +19,12 @@ public class GettyImageDownloader {
     private static String SEARCH_URL_TEMPLATE = BASE_URL + "/search/2/image?family=editorial&phrase=%s&page=%d";
 
     public static void main(String[] args) throws Exception {
-        String searchTerm = "\"taylor fritz\""; // Replace with your search term
-        SEARCH_URL_TEMPLATE += "&numberofpeople=one";
+        String searchTerm = "\"todd field\""; // Replace with your search term
+        //SEARCH_URL_TEMPLATE += "&numberofpeople=one";
         //SEARCH_URL_TEMPLATE += "&begindate=2013-12-30&enddate=2016-12-31";
-        SEARCH_URL_TEMPLATE += "&sort=newest";
-        SEARCH_URL_TEMPLATE += "&specificpeople=14747640";
-        SEARCH_URL_TEMPLATE += "&compositions=headshot";
+        SEARCH_URL_TEMPLATE += "&sort=oldest";
+        SEARCH_URL_TEMPLATE += "&specificpeople=2294677";
+        //SEARCH_URL_TEMPLATE += "&compositions=headshot";
         searchTerm = URLEncoder.encode(searchTerm, "utf-8");
         downloadImages(searchTerm);
     }
@@ -38,7 +39,7 @@ public class GettyImageDownloader {
         }
 
         while (hasNextPage) {
-            if (pageNum == 2) {
+            if (pageNum == 3) {
                 break;
             }
             try {
@@ -105,6 +106,7 @@ public class GettyImageDownloader {
                 inputStream.close();
             }
         } catch (IOException e) {
+            new ReentrantLock().lock();
             System.err.println("Failed to download image: " + imageUrl + " - " + e.getMessage());
         }
     }

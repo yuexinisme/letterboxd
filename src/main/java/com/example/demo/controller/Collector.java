@@ -141,8 +141,33 @@ public class Collector implements ApplicationRunner {
      * @return
      * @throws Exception
      */
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    //@Scheduled(fixedRate = 1000 * 60 * 60 * 12)
     public Map<String, Integer> collectLikes() throws Exception {
+        Map<String, String> cookies = new HashMap<>();
+        // 从你的 curl 中提取的关键 cookies
+        cookies.put("com.xk72.webparts.csrf", "c5cd3f3752272967d79f");
+        cookies.put("useMobileSite", "no");
+        cookies.put("cf_clearance", "bnHF72j3mGm9FxM9zGU2wGPhvPamdkkS_XxmlSDBnyQ-1769269143-1.2.1.1-rHqhSZ8hSnax87PILaZPNZ4NMRqVs5Ux5VOX.PWN769ioVA2aOljrsDWAawF26a_Uih3ThFSHsG4kmkWHWLZXNBjPDhXpWflVriDEm8.OHubVXsXgrQ9qjW7GLmQQ40vt3XEx6WcoD805MPs93fuO.n8iZMpHtXs.dtNB9_VQ_GfnAB8Q5G3n7rkf4vV2OJN20ZYyMeu3.lEDGN_SC.FXKPtlm6wHnEYzN6YnBp4wqI");
+        cookies.put("usprivacy", "1---");
+        cookies.put("ad_clicker", "false");
+        cookies.put("_sharedid", "8db39792-b629-4e57-b2a2-4abe3ac12424");
+        cookies.put("_sharedid_cst", "zix7LPQsHA%3D%3D");
+        cookies.put("_li_dcdm_c", ".letterboxd.com");
+        cookies.put("_lc2_fpi", "adb4d668fb2b--01kfrahrtdt7znc68x5qj8hhv0");
+        cookies.put("_lc2_fpi_meta", "%7B%22w%22%3A1769269158733%7D");
+        cookies.put("_lr_retry_request", "true");
+        cookies.put("_lr_env_src_ats", "false");
+        cookies.put("panoramaId_expiry", "1769873959593");
+        cookies.put("_cc_id", "54aa42c03b517fc3db9b3e58bef39c53");
+        cookies.put("panoramaId", "5d5e4ff736c854ada0e0fefb9195185ca02cf8f152cccedf9b949a7489283e53");
+        cookies.put("_ga_D3ECBB4D7L", "GS2.2.s1769269142$o1$g1$t1769269160$j42$l0$h0");
+        cookies.put("_ga_L0W7RDZXX3", "GS2.1.s1769269156$o1$g0$t1769269160$j56$l0$h0");
+        cookies.put("_ga", "GA1.1.252084593.1769269142");
+        cookies.put("cto_bundle", "HZivRl9RRkhOZnNaOXFtY1hjVUhLYSUyRkhHTzhETWllWUZaUWlpbm1scEExZDVCVEpVWGZoQldTUW1HeE9sZjczdU9BSGxoeGJqQ3Myc2Rta2poT2N6dyUyRjlaQXdvSEo1b3JBWkw4UVpaT0phMCUyRlBLZ0VEZkkyRVBGQTg2Q3hIaXRLMTJ5cA");
+        cookies.put("cto_bidid", "OrfK7F9jSDQlMkIlMkZQcnJ5eHdLSEhKRWwyTEZndmk4cmN3UEtybm1GT1paaUlZQ09kT1NudXdHYmNRNmlKN1lZZldBakhPM1M5TVB6bTd4cSUyRm40R21VbjFQVWJ3QSUzRCUzRA");
+        cookies.put("_awl", "2.1769269161.5-8a194f5259c1652641b91e69dea6c97c-6763652d617369612d6561737431-0");
+        cookies.put("_lr_sampling_rate", "100");
+
         int count = 0;
         Date date = new Date();
         SimpleDateFormat f = new SimpleDateFormat();
@@ -157,13 +182,21 @@ public class Collector implements ApplicationRunner {
             log.info("page:" + page);
             try {
                 document = Jsoup.connect("https://letterboxd.com/NickOfDaSouth/films/reviews/page/" + page)
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                        .header("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
+                        //.header("Accept-Encoding", "gzip, deflate, br")
+                        .header("Connection", "keep-alive")
+                        .header("Upgrade-Insecure-Requests", "1")
+                        .header("Cache-Control", "max-age=0")
+                        .timeout(30000)
+                        //.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
                         .get();
             } catch (Exception e) {
-                continue;
+                throw e;
             }
 
-            log.info("https://letterboxd.com/NickOfDaSouf/films/reviews/page/", page);
-            //System.out.println(document);
+            log.info("https://letterboxd.com/NickOfDaSouth/films/reviews/page/", page);
             Elements names = document.getElementsByClass("like-link-target react-component");
             if (names.size() == 0) {
                 break;
@@ -175,15 +208,37 @@ public class Collector implements ApplicationRunner {
                 log.info(fullUrl);
                 movie:
                 for (int p = 1; ; p++) {
+                    System.out.println(fullUrl + "page/" + p);
                     Document doc;
                     boolean hasNew = false;
                     try {
+                        Thread.sleep(5000);
                         doc = Jsoup.connect(fullUrl + "page/" + p)
+                                .cookies(cookies)
+                                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36")
+                                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+                                .header("Accept-Language", "en-US,en;q=0.9")
+                                //.header("Accept-Encoding", "gzip, deflate, br")
+                                .header("Connection", "keep-alive")
+                                .header("Upgrade-Insecure-Requests", "1")
+                                .header("Cache-Control", "max-age=0")
+                                .header("Sec-Fetch-Dest", "document")
+                                .header("Sec-Fetch-Mode", "navigate")
+                                .header("Sec-Fetch-Site", "same-origin")
+                                .header("Sec-Fetch-User", "?1")
+                                .header("Sec-Ch-Ua", "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"")
+                                .header("Sec-Ch-Ua-Mobile", "?0")
+                                .header("Sec-Ch-Ua-Platform", "\"macOS\"")
+                                .header("Priority", "u=0, i")
+                                .referrer("https://letterboxd.com/")
+                                .timeout(30000)
+                                .ignoreHttpErrors(true)
+                                //.userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
                                 .get();
                     } catch (Exception eq) {
-                        continue;
+                        throw eq;
                     }
-
+                    System.out.println(doc);
                     Elements els = doc.select("h3[class=title-3]");
                     if (els.size() == 0)
                         break;
@@ -202,7 +257,7 @@ public class Collector implements ApplicationRunner {
                             hasNew = true;
                             count++;
                         } else {
-                            //log.info("重复, name:" + name + " url: " + fullUrl);
+                            log.info("重复, name:" + name + " url: " + fullUrl);
 
                             //break movie;
 
@@ -323,7 +378,7 @@ public class Collector implements ApplicationRunner {
                 Record record = new Record();
                 String attr = e.attr("href");
                 record.setUsername(attr);
-                String followUrl = "https://letterboxd.com/" + attr + "films/diary/";
+                String followUrl = "https://letterboxd.com" + attr + "films/diary/";
                 log.info("followurl " + followUrl);
                 try {
                     document = Jsoup.connect(followUrl)
@@ -333,16 +388,18 @@ public class Collector implements ApplicationRunner {
                     document = Jsoup.connect(followUrl)
                             .get();
                 }
-                Elements dates = document.getElementsByClass("date");
+                Elements dates = document.getElementsByClass("month");
                 log.info("dates:" + dates);
                 if (dates.size() == 0) {
                     record.setTime(null);
                 } else {
                     log.info("text: " + dates.get(0).text());
-                    String mouth = dates.get(0).text().substring(0, 3);
-                    String year = dates.get(0).text().substring(4, 8);
-                    if (!year.equals("2023")) {
-                        record.setTime("year");
+                    String text = dates.get(0).attr("href");
+                    String[] split = text.split("/");
+                    String mouth = split[split.length - 1];
+                    String year = split[split.length - 2];
+                    if (!year.equals("2025")) {
+                        record.setTime(year);
                     } else {
                         record.setTime(mouth);
                     }
@@ -365,16 +422,22 @@ public class Collector implements ApplicationRunner {
 
     public List<String> checkUnfollowers() throws Exception {
         while (true) {
-            Document document;
+            Document document = null;
             int tail = id1++;
             log.info("tail: " + tail);
 
-            try {
-                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
-                        .get();
-            } catch (Exception e) {
-                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail)
-                        .get();
+            int idx = 0;
+            while (idx < 10) {
+                try {
+                    document = Jsoup.connect("https://letterboxd.com/nickofdasouth/following/page/" + tail).timeout(100000).get();
+
+                } catch (Exception e) {
+                    idx++;
+                }
+                break;
+            }
+            if (idx == 10) {
+                continue;
             }
 
 
@@ -394,16 +457,23 @@ public class Collector implements ApplicationRunner {
         }
         log.info("out");
         while (true) {
-            Document document;
+            Document document = null;
             int tail = id2++;
             log.info("tail: " + tail);
 
-            try {
-                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
-                        .get();
-            } catch (Exception e) {
-                document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
-                        .get();
+            int idx = 0;
+            while (idx < 10) {
+                try {
+                    document = Jsoup.connect("https://letterboxd.com/nickofdasouth/followers/page/" + tail)
+                            .timeout(100000).get();
+
+                } catch (Exception e) {
+                    idx++;
+                }
+                break;
+            }
+            if (idx == 10) {
+                continue;
             }
 
 
@@ -424,6 +494,7 @@ public class Collector implements ApplicationRunner {
         followers.remove("/tomslotter/");
         followings.removeAll(followers);
         Collections.reverse(followings);
+        System.out.println("followings:::");
         System.out.println(followings);
         return followings;
     }

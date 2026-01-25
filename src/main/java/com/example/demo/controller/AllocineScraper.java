@@ -85,7 +85,7 @@ public class AllocineScraper {
 
     static void initDB() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC", "root", "yuexinisme");
+        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true", "root", "yuexinisme");
 
         Statement stmt = connection.createStatement();
         stmt.execute("CREATE TABLE IF NOT EXISTS movies (" +

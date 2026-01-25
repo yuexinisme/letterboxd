@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class RandomFileNameRenamer {
@@ -45,6 +46,8 @@ public class RandomFileNameRenamer {
                 }
             }
         } else {
+            new HashMap<>().put(1,1);
+            new String("");
             System.out.println("Provided path is not a valid directory.");
         }
     }

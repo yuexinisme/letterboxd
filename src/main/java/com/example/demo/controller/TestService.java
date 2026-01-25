@@ -86,6 +86,7 @@ public class TestService {
             System.out.println("提取结果：" + raw.substring(start));
         } else {
             System.out.println("未找到 /film/ 开头的内容");
+            Thread.currentThread().getId();
         }
     }
 
